@@ -118,7 +118,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbzufMSNbj2LhmNstbUwnkpywbmjeHHJ8Hich7-qYytOD-gOD4CIVp4QXPg2p1BeiN-VLQ/exec";
+const API = "https://script.google.com/macros/s/AKfycbwEuiPtQ4gTgKwe5JPMqZKCk8OQE1DT8mOuUyClBzcKEEobqiP-jVqFeH8q5fTu02Sdng/exec";
 let gid=null,port=null,wtr=null,busy=false,ls="",serialBuffer = "",curUid=null,curCard=null;
 let timerInterval = null;
 let timeLeft = 30;
@@ -176,74 +176,42 @@ function updateTurnText() {
 
 async function autoEndTurn() {
   if (!gid || busy) return;
-  
-  busy = true; // 조작 방지
+  busy = true;
   stopTimer();
   
-  // UI 즉시 닫기
+  // UI 초기화
   document.getElementById('dc').style.display = 'none';
   document.getElementById('pa').style.display = 'none';
   document.getElementById('pt').style.display = 'none';
   document.getElementById('pc').classList.remove('on');
 
-  // 메시지 표시
-  document.getElementById('th').style.display = 'block';
-  document.getElementById('th').innerHTML = '⏰ 시간 초과! Guardian이 기회를 잡았습니다!';
-
-  const playerName = document.getElementById('pn').innerText;
-  const timeoutLog = `⏰ ${playerName}이(가) 망설이는 사이, 공기가 차갑게 가라앉습니다...`;
-  showStory(timeoutLog);
-  log(timeoutLog, 'sy');
-
-  await new Promise(r => setTimeout(r, 1500));
-
+  // 안내 메시지
+  showStory("⏰ 시간 초과! Guardian이 당신의 빈틈을 노립니다!");
+  
   try {
-    // [핵심] AI에게 보낼 랜덤 상황 설정 (AI가 아무것도 안 하는 것을 방지)
-    const randomScenarios = [
-      "플레이어가 겁에 질려 멈춘 틈을 타 Guardian이 강력한 마력을 쏟아붓습니다.",
-      "시간이 멈춘 듯한 정적 속에서 Guardian의 기습적인 일격이 날아듭니다.",
-      "플레이어의 집중력이 흐트러진 순간, Guardian이 빈틈을 파고들어 공격합니다."
-    ];
-    const forcedPrompt = randomScenarios[Math.floor(Math.random() * randomScenarios.length)];
-
-    // AI 턴 호출 (서버에 강제 상황을 전달할 수 없으므로, aiTurn을 호출하되 결과를 반드시 출력)
-    const ai = await api('aiTurn', { gameId: gid });
-    console.log('시간 초과 후 AI 응답:', ai);
-
+    // 이제 서버의 aiTurn은 상태(status)와 관계없이 작동합니다.
+    const ai = await api('aiTurn', {gameId: gid});
+    
     if (ai && ai.success) {
-      ls = ai.story; 
+      ls = ai.story;
       updateHP(ai.playerHP, ai.aiHP);
-      
-      // 만약 서버에서 준 스토리가 너무 짧거나 없다면 강제 메시지 결합
-      const finalStory = ai.story && ai.story.length > 5 ? ai.story : forcedPrompt;
-      
-      showStory('🤖 ' + finalStory);
-      log('🤖 ' + finalStory, 'at');
+      showStory('🤖 ' + ai.story);
+      log('🤖 ' + ai.story, 'at');
       
       if (wtr) wtr.write('RGB:' + ai.rgb + '\n');
       if (ai.status == 'FINISHED') {
         endGame(ai.playerHP > 0);
         return;
       }
-    } else {
-      // 서버 응답 실패 시 자체적인 대미지 연출 (Fallback)
-      log('⚠️ Guardian의 위협적인 기세에 압도당했습니다.', 'at');
     }
-
-    // 연출 후 플레이어 턴으로 복귀
-    await new Promise(r => setTimeout(r, 2000));
     
-    document.getElementById('th').style.display = 'none';
+    // AI 행동 종료 후 다시 플레이어 턴으로
+    await new Promise(r => setTimeout(r, 2000));
     document.getElementById('pt').style.display = 'block';
     document.getElementById('pc').classList.add('on');
-    
-    curUid = null;
-    curCard = null;
     busy = false;
     startTimer();
-
-  } catch (e) {
-    console.error("시간 초과 처리 중 오류:", e);
+  } catch(e) {
     busy = false;
     startTimer();
   }
