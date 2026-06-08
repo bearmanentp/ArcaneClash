@@ -3,295 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcane Clash</title>
+    <title>🌌 Arcane Clash</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Noto Sans KR',sans-serif;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#fff;min-height:100vh;overflow-x:hidden}
-        h1{text-align:center;font-size:2.8em;margin:25px 0 8px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .sub{text-align:center;color:#aaa;margin-bottom:20px}
-        .box{background:rgba(255,255,255,.08);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:25px;margin:18px auto;max-width:850px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
-        input,textarea{width:100%;padding:14px;font-size:16px;border-radius:12px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;margin:8px 0;resize:none}
-        input:focus,textarea:focus{border-color:#667eea;outline:none}
-        button{padding:14px 28px;font-size:17px;border:none;border-radius:12px;cursor:pointer;font-weight:bold;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;transition:all .3s;margin:5px}
-        button:hover{transform:translateY(-3px);box-shadow:0 10px 25px rgba(102,126,234,.4)}
+        h1{text-align:center;font-size:2.8em;margin:25px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(255,210,0,.3))}
+        .sub{text-align:center;color:#aaa;margin-bottom:20px;font-size:.95em}
+        .box{background:rgba(255,255,255,.08);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:25px;margin:15px auto;max-width:860px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+        input,textarea{width:100%;padding:14px;font-size:16px;border-radius:12px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;margin:8px 0;resize:none;outline:none;transition:border .3s}
+        input:focus,textarea:focus{border-color:#667eea}
+        input::placeholder,textarea::placeholder{color:#888}
+        button{padding:14px 28px;font-size:16px;border:none;border-radius:12px;cursor:pointer;font-weight:bold;transition:all .3s;margin:5px}
+        button:hover{transform:translateY(-3px);box-shadow:0 10px 25px rgba(0,0,0,.4)}
         button:disabled{opacity:.4;cursor:not-allowed;transform:none}
-        .arena{display:none;grid-template-columns:1fr 90px 1fr;gap:20px}
-        .pcard{background:rgba(255,255,255,.1);border-radius:16px;padding:22px;text-align:center;transition:all .4s}
-        .pcard.active{border:3px solid #ffd200;box-shadow:0 0 40px rgba(255,210,0,.4)}
-        .hpb{height:32px;background:#222;border-radius:10px;overflow:hidden;margin:12px 0}
-        .hp{height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;transition:width .8s;font-size:.9em}
+        .btn-usb{background:linear-gradient(135deg,#434343,#000);color:#fff}
+        .btn-start{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+        .btn-cast{background:linear-gradient(135deg,#eb3349,#f45c43);color:#fff;width:100%}
+        .btn-sp{background:linear-gradient(135deg,#f7971e,#ffd200);color:#333;width:100%;animation:glow 2s infinite}
+        @keyframes glow{0%,100%{box-shadow:0 0 5px #ffd200}50%{box-shadow:0 0 25px #ffd200,0 0 50px #ffd200}}
+        .arena{display:none;grid-template-columns:1fr 100px 1fr;gap:20px;align-items:center}
+        .pcard{background:rgba(255,255,255,.08);border-radius:18px;padding:22px;text-align:center;border:2px solid rgba(255,255,255,.1);transition:all .4s}
+        .pcard.active{border-color:#ffd200;box-shadow:0 0 40px rgba(255,210,0,.3);background:rgba(255,210,0,.05)}
+        .pcard.lose{opacity:.4;filter:grayscale(1)}
+        .hpb{height:30px;background:rgba(0,0,0,.4);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
+        .hp{height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.9em;transition:width .8s cubic-bezier(.4,0,.2,1);border-radius:10px;min-width:30px}
         .hpp{background:linear-gradient(90deg,#00c853,#64dd17)}
         .hpa{background:linear-gradient(90deg,#f50057,#ff1744)}
-        .hplow{animation:blink .8s infinite}
-        @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-        .vs{font-size:2.8em;align-self:center;font-weight:900;color:#ffd200;text-shadow:0 0 20px rgba(255,210,0,.5)}
-        #log{max-height:320px;overflow-y:auto;padding:14px;background:rgba(0,0,0,.3);border-radius:14px}
-        .entry{padding:14px;margin:8px 0;border-radius:12px;background:rgba(255,255,255,.08);border-left:5px solid #667eea;animation:slide .5s;font-size:.92em;line-height:1.5}
-        .entry.atk{border-left-color:#f50057}
-        .entry.heal{border-left-color:#00c853}
-        .entry.def{border-left-color:#00c6ff}
-        .entry.crit{border-left-color:#ffd200;background:rgba(255,210,0,.12)}
-        @keyframes slide{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
-        .drawn{background:linear-gradient(135deg,#667eea,#764ba2);padding:22px;border-radius:16px;margin:15px 0;font-size:1.1em}
-        .drawn h3{font-size:1.4em;margin-bottom:5px}
-        .thinking{display:none;text-align:center;font-size:1.4em;color:#ff1744;margin:20px;animation:think 1.5s infinite}
-        @keyframes think{0%,100%{opacity:1}50%{opacity:.2}}
-        #go{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:1000;flex-direction:column;justify-content:center;align-items:center}
-        .wt{font-size:4em;margin-bottom:15px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .hplow{animation:hpblink .6s infinite}
+        @keyframes hpblink{0%,100%{opacity:1}50%{opacity:.4}}
+        .vsbox{text-align:center}
+        .vs{font-size:2.5em;font-weight:900;color:#ffd200;text-shadow:0 0 20px rgba(255,210,0,.6);display:block}
+        .tc{color:#aaa;font-size:.8em;margin-top:8px;display:block}
+        .badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.78em;font-weight:bold;margin-top:6px;transition:all .3s}
+        .b-ready{background:#ffd200;color:#333}
+        .b-used{background:#333;color:#777}
+        .turn-msg{color:#ffd200;font-weight:bold;font-size:1.05em;margin-top:10px;display:none;animation:bounce .8s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+        .drawn-card{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid #667eea;border-radius:16px;padding:22px;margin:15px 0;box-shadow:0 0 30px rgba(102,126,234,.3);display:none}
+        .card-name{font-size:1.6em;font-weight:bold;margin-bottom:6px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .card-type{font-size:.9em;margin-bottom:6px}
+        .card-desc{color:#aaa;font-size:.88em}
+        .type-attack{color:#f50057}
+        .type-heal{color:#00c853}
+        .type-defense{color:#00c6ff}
+        #promptarea{display:none;margin-top:15px}
+        #log{max-height:350px;overflow-y:auto;padding:14px;background:rgba(0,0,0,.3);border-radius:14px}
+        #log::-webkit-scrollbar{width:5px}
+        #log::-webkit-scrollbar-thumb{background:#667eea;border-radius:3px}
+        .entry{padding:14px 16px;margin:8px 0;border-radius:12px;background:rgba(255,255,255,.07);border-left:5px solid #667eea;animation:slide .4s ease;font-size:.9em;line-height:1.6}
+        .entry.atk{border-left-color:#f50057;background:rgba(245,0,87,.08)}
+        .entry.heal{border-left-color:#00c853;background:rgba(0,200,83,.08)}
+        .entry.def{border-left-color:#00c6ff;background:rgba(0,198,255,.08)}
+        .entry.crit{border-left-color:#ffd200;background:rgba(255,210,0,.1);font-weight:bold}
+        .entry.sys{border-left-color:#aaa;color:#aaa;font-size:.85em}
+        @keyframes slide{from{opacity:0;transform:translateX(-15px)}to{opacity:1;transform:translateX(0)}}
+        .thinking{display:none;text-align:center;padding:20px;font-size:1.2em;color:#ff6b6b}
+        .think-dots::after{content:'';animation:tdots 1.5s infinite}
+        @keyframes tdots{0%{content:''}33%{content:'.'}66%{content:'..'}100%{content:'...'}}
+        #go{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.96);z-index:1000;flex-direction:column;justify-content:center;align-items:center}
+        .wt{font-size:4em;font-weight:900;margin-bottom:15px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .ws{color:#aaa;font-size:1.2em;margin-bottom:30px}
         #particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
-        .deck-info{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
-        .deck-tag{padding:6px 12px;border-radius:8px;font-size:.8em;font-weight:bold}
-        .deck-tag.attack{background:rgba(245,0,87,.3);border:1px solid #f50057}
-        .deck-tag.heal{background:rgba(0,200,83,.3);border:1px solid #00c853}
-        .deck-tag.defense{background:rgba(0,198,255,.3);border:1px solid #00c6ff}
-        .sparkle{position:fixed;pointer-events:none;width:6px;height:6px;border-radius:50%;animation:sparkle 1s forwards}
-        @keyframes sparkle{0%{transform:scale(1);opacity:1}100%{transform:scale(0);opacity:0}}
+        .sp-el{position:fixed;pointer-events:none;z-index:999;border-radius:50%;width:8px;height:8px}
     </style>
 </head>
 <body>
-    <canvas id="particles"></canvas>
-    <h1>🌌 Arcane Clash</h1>
-    <p class="sub">카드를 대면 랜덤 드로우! 프롬프트로 시전!</p>
+<canvas id="particles"></canvas>
 
-    <div class="box" id="lobby">
-        <input type="text" id="pname" placeholder="닉네임 입력">
-        <button onclick="connectSerial()">🔌 USB 리더기 연결</button>
-        <button onclick="startGame()">⚔️ 게임 시작</button>
-        <div id="sts" style="margin-top:12px;font-weight:bold"></div>
+<h1>🌌 Arcane Clash</h1>
+<p class="sub">카드를 대면 랜덤 드로우! 상상의 주문으로 AI와 싸워라!</p>
+
+<!-- 로비 -->
+<div class="box" id="lobby">
+    <input type="text" id="pname" placeholder="닉네임을 입력하세요" maxlength="12">
+    <div style="display:flex;gap:10px;margin-top:5px">
+        <button class="btn-usb" onclick="connectSerial()" id="usbbtn">🔌 USB 연결</button>
+        <button class="btn-start" onclick="startGame()">⚔️ 게임 시작</button>
+    </div>
+    <div id="sts" style="margin-top:12px;font-weight:bold;min-height:24px"></div>
+</div>
+
+<!-- 배틀 아레나 -->
+<div class="box arena" id="arena">
+    <div class="pcard" id="pc">
+        <h2 id="pnd" style="font-size:1.3em;margin-bottom:5px">Player</h2>
+        <div class="hpb"><div class="hp hpp" id="php" style="width:100%">100</div></div>
+        <div id="psp" class="badge b-ready">⚡ 스페셜 READY</div>
+        <div class="turn-msg" id="pt">▶ YOUR TURN!</div>
+    </div>
+    <div class="vsbox">
+        <span class="vs">VS</span>
+        <span class="tc" id="tc">턴 0/25</span>
+    </div>
+    <div class="pcard" id="ac">
+        <h2 style="font-size:1.3em;margin-bottom:5px">🤖 Arcane Guardian</h2>
+        <div class="hpb"><div class="hp hpa" id="ahp" style="width:100%">100</div></div>
+        <div id="asp" class="badge b-ready">⚡ 스페셜 READY</div>
+    </div>
+</div>
+
+<!-- 카드 드로우 영역 -->
+<div class="box" id="drawarea" style="display:none">
+    <h2 style="margin-bottom:5px">🃏 카드를 리더기에 대주세요!</h2>
+    <p style="color:#aaa;font-size:.9em">어떤 카드든 대면 랜덤으로 뽑힙니다</p>
+
+    <div class="drawn-card" id="drawn">
+        <div class="card-name" id="cn"></div>
+        <div class="card-type" id="ct"></div>
+        <div class="card-desc" id="cd"></div>
     </div>
 
-    <div class="box arena" id="arena">
-        <div class="pcard" id="pc">
-            <h2 id="pnd">Player</h2>
-            <div class="hpb"><div class="hp hpp" id="php" style="width:100%">100</div></div>
-            <div style="font-size:.85em;color:#aaa">🃏 남은 덱</div>
-            <div id="pdeck" class="deck-info"></div>
-            <div id="psp" style="margin-top:6px;padding:4px 12px;border-radius:10px;font-size:.82em;background:#ffd200;color:#333;display:inline-block">⚡ 스페셜 READY</div>
-            <div id="pt" style="display:none;color:#ffd200;font-weight:bold;margin-top:10px;font-size:1.1em">▶ YOUR TURN</div>
-        </div>
-        <div style="align-self:center;text-align:center">
-            <div class="vs">VS</div>
-            <div id="tc" style="color:#ffd200;font-size:.8em;margin-top:6px">턴 0/25</div>
-        </div>
-        <div class="pcard" id="ac">
-            <h2>🤖 Arcane Guardian</h2>
-            <div class="hpb"><div class="hp hpa" id="ahp" style="width:100%">100</div></div>
-            <div style="font-size:.85em;color:#aaa">AI 상대</div>
-            <div id="asp" style="margin-top:6px;padding:4px 12px;border-radius:10px;font-size:.82em;background:#ffd200;color:#333;display:inline-block">⚡ 스페셜 READY</div>
-        </div>
+    <div id="promptarea">
+        <textarea id="pi" rows="3" placeholder="✨ 시전할 주문을 자유롭게 입력하세요!&#10;예: 불꽃이 폭발하며 적을 베어라!&#10;예: 빛의 방패로 모든 공격을 막아라!"></textarea>
+        <button class="btn-cast" onclick="cast(false)">🎴 일반 시전</button>
+        <button class="btn-sp" onclick="cast(true)" id="spbtn" style="display:none;margin-top:8px">⚡ 스페셜 시전! (데미지 2배)</button>
     </div>
+</div>
 
-    <div class="thinking" id="think">🤖 AI가 주문을 해석 중...</div>
+<!-- AI 생각 중 -->
+<div class="thinking" id="think">
+    <span id="thinktext">🤖 AI가 주문을 해석 중</span><span class="think-dots"></span>
+</div>
 
-    <div class="box" id="drawarea" style="display:none">
-        <h2>🃏 카드를 리더기에 대주세요!</h2>
-        <div id="drawn" class="drawn" style="display:none">
-            <h3 id="cn"></h3>
-            <p style="color:#ffd200" id="ct"></p>
-            <p id="cd" style="color:#ccc;margin-top:5px"></p>
-        </div>
-        <div id="promptarea" style="display:none">
-            <textarea id="pi" placeholder="시전할 주문을 자유롭게 입력하세요!&#10;예: 불꽃이 폭발하며 베어라! / 얼음 갑옷을 입어라!" rows="3"></textarea>
-            <button onclick="cast(false)" style="width:100%">🎴 일반 시전</button>
-            <button onclick="cast(true)" id="spbtn" style="width:100%;background:linear-gradient(135deg,#f7971e,#ffd200);color:#333;display:none">⚡ 스페셜 시전!</button>
-        </div>
-    </div>
+<!-- 전투 로그 -->
+<div class="box" id="logbox" style="display:none">
+    <h3 style="margin-bottom:12px">📜 전투 로그</h3>
+    <div id="log"></div>
+</div>
 
-    <div class="box" id="logbox" style="display:none">
-        <h3>📜 전투 로그</h3>
-        <div id="log"></div>
-    </div>
+<!-- 게임 오버 -->
+<div id="go">
+    <div class="wt" id="wtx"></div>
+    <div class="ws" id="wsub"></div>
+    <button onclick="location.reload()" style="padding:16px 50px;font-size:1.2em;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:14px;cursor:pointer">🔄 다시 하기</button>
+</div>
 
-    <div id="go">
-        <div class="wt" id="wtx"></div>
-        <p style="color:#aaa;margin-bottom:25px;font-size:1.2em" id="wsub"></p>
-        <button onclick="location.reload()" style="padding:15px 40px;font-size:1.2em">🔄 다시 하기</button>
-    </div>
+<script>
+// ★ 여기에 배포된 앱스크립트 URL 붙여넣기!
+const API = "https://script.google.com/macros/s/AKfycbySOacOldNK-iWK_ld67dl41BRpkIIMlxtV0qYAMySw6sJQPbPYdS8WKio7U-pMT12UfA/exec";
 
-    <script>
-        const API = "https://script.google.com/macros/s/AKfycbwcXk54-ECRyVWgQ5fT6Dqr8cL6JcR_zFChohxvkQwHUN7oqseJr9p3WnDyQTtbKRw3nw/exec";
-        let gid=null, port=null, wtr=null, rdr=null, busy=false, lastStory="";
+let gid=null, port=null, wtr=null, busy=false, lastStory="", cbCount=0;
 
-        // 파티클
-        const cvs=document.getElementById('particles'), cx=cvs.getContext('2d');
-        cvs.width=window.innerWidth; cvs.height=window.innerHeight;
-        const pts=[];
-        for(let i=0;i<60;i++) pts.push({x:Math.random()*cvs.width,y:Math.random()*cvs.height,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,s:Math.random()*2+1,o:Math.random()*.4+.1});
-        function anim(){cx.clearRect(0,0,cvs.width,cvs.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>cvs.width)p.vx*=-1;if(p.y<0||p.y>cvs.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.s,0,Math.PI*2);cx.fillStyle='rgba(255,210,0,'+p.o+')';cx.fill()});requestAnimationFrame(anim)}
-        anim();
+// ===== JSONP (CORS 완전 우회) =====
+function api(action, params){
+    return new Promise((resolve, reject)=>{
+        const cbName = '__cb_'+(++cbCount);
+        const qs = params
+            ? '&'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(String(v))).join('&')
+            : '';
+        const url = API+'?action='+action+qs+'&callback='+cbName;
 
-        // 스파클
-        function sparkle(x,y,color){
-            for(let i=0;i<12;i++){
-                const s=document.createElement('div');
-                s.className='sparkle';
-                s.style.cssText=`left:${x}px;top:${y}px;background:${color};box-shadow:0 0 6px ${color};transform:translate(-50%,-50%)`;
-                const a=Math.random()*Math.PI*2,d=Math.random()*60+30;
-                s.style.animation='none';
-                document.body.appendChild(s);
-                s.animate([
-                    {transform:`translate(-50%,-50%) translate(0,0) scale(1)`,opacity:1},
-                    {transform:`translate(-50%,-50%) translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(0)`,opacity:0}
-                ],{duration:600+Math.random()*400});
-                setTimeout(()=>s.remove(),1100);
+        window[cbName] = function(data){
+            delete window[cbName];
+            try{ document.body.removeChild(sc); }catch(e){}
+            resolve(data);
+        };
+
+        const sc = document.createElement('script');
+        sc.src = url;
+        sc.onerror = function(){
+            delete window[cbName];
+            try{ document.body.removeChild(sc); }catch(e){}
+            reject(new Error('요청 실패: '+url));
+        };
+        document.body.appendChild(sc);
+
+        setTimeout(()=>{
+            if(window[cbName]){
+                delete window[cbName];
+                try{ document.body.removeChild(sc); }catch(e){}
+                reject(new Error('타임아웃'));
             }
-        }
+        }, 20000);
+    });
+}
 
-        // 시리얼
-        async function connectSerial(){
-            if(!("serial" in navigator))return alert("Chrome!");
-            port=await navigator.serial.requestPort();
-            await port.open({baudRate:115200});
-            const enc=new TextEncoderStream();enc.readable.pipeTo(port.writable);
-            wtr=enc.writable.getWriter();
-            const dec=new TextDecoderStream();port.readable.pipeTo(dec.writable);
-            rdr=dec.readable.getReader();
-            document.getElementById('sts').innerHTML='✅ 연결됨';
-            rsrl();
-        }
-        async function rsrl(){
+// ===== 파티클 배경 =====
+const cvs=document.getElementById('particles'),cx=cvs.getContext('2d');
+function resizeCvs(){ cvs.width=window.innerWidth; cvs.height=window.innerHeight; }
+resizeCvs(); window.addEventListener('resize',resizeCvs);
+const pts=[];
+for(let i=0;i<70;i++) pts.push({
+    x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+    vx:(Math.random()-.5)*.6, vy:(Math.random()-.5)*.6,
+    s:Math.random()*2.5+.5, o:Math.random()*.5+.1,
+    c:['255,210,0','102,126,234','118,75,162'][Math.floor(Math.random()*3)]
+});
+function animPts(){
+    cx.clearRect(0,0,cvs.width,cvs.height);
+    pts.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0||p.x>cvs.width)p.vx*=-1;
+        if(p.y<0||p.y>cvs.height)p.vy*=-1;
+        cx.beginPath(); cx.arc(p.x,p.y,p.s,0,Math.PI*2);
+        cx.fillStyle='rgba('+p.c+','+p.o+')'; cx.fill();
+    });
+    requestAnimationFrame(animPts);
+}
+animPts();
+
+// ===== 스파클 이펙트 =====
+function sparkle(x,y,color='#ffd200'){
+    for(let i=0;i<16;i++){
+        const s=document.createElement('div');
+        s.className='sp-el';
+        s.style.cssText='left:'+x+'px;top:'+y+'px;background:'+color+';box-shadow:0 0 8px '+color;
+        document.body.appendChild(s);
+        const a=Math.random()*Math.PI*2, d=Math.random()*100+40;
+        s.animate([
+            {transform:'translate(-50%,-50%) translate(0,0) scale(1.5)',opacity:1},
+            {transform:'translate(-50%,-50%) translate('+Math.cos(a)*d+'px,'+Math.sin(a)*d+'px) scale(0)',opacity:0}
+        ],{duration:800+Math.random()*400,easing:'cubic-bezier(0,0,0.2,1)'});
+        setTimeout(()=>{ try{document.body.removeChild(s)}catch(e){} },1300);
+    }
+}
+
+// ===== 화면 흔들기 =====
+function shake(){
+    document.body.animate([
+        {transform:'translate(0,0)'},{transform:'translate(-6px,2px)'},
+        {transform:'translate(6px,-2px)'},{transform:'translate(-4px,4px)'},
+        {transform:'translate(0,0)'}
+    ],{duration:300});
+}
+
+// ===== USB 시리얼 연결 =====
+async function connectSerial(){
+    if(!("serial" in navigator)) return alert("Chrome 브라우저를 사용하세요!");
+    try{
+        port = await navigator.serial.requestPort();
+        await port.open({baudRate:115200});
+        const enc=new TextEncoderStream();
+        enc.readable.pipeTo(port.writable);
+        wtr=enc.writable.getWriter();
+        const dec=new TextDecoderStream();
+        port.readable.pipeTo(dec.writable);
+        const rdr=dec.readable.getReader();
+        document.getElementById('usbbtn').innerText='✅ 연결됨';
+        document.getElementById('usbbtn').disabled=true;
+        addLog('🔌 RFID 리더기 연결됨','sys');
+        (async function loop(){
             while(true){
-                const{value,done}=await rdr.read();
+                const {value,done}=await rdr.read();
                 if(done)break;
-                if(value&&value.includes('CARD:')&&!busy)onCard();
+                if(value&&value.includes('CARD:')&&!busy) onCard();
             }
+        })();
+    }catch(e){ alert("연결 실패: "+e.message); }
+}
+
+// ===== 게임 시작 =====
+async function startGame(){
+    const n=document.getElementById('pname').value.trim();
+    if(!n) return alert('닉네임을 입력하세요!');
+    document.getElementById('sts').innerHTML='⏳ 게임 시작 중...';
+    try{
+        const d=await api('startGame',{player:n});
+        if(d.success){
+            gid=d.gameId;
+            document.getElementById('lobby').style.display='none';
+            document.getElementById('arena').style.display='grid';
+            document.getElementById('drawarea').style.display='block';
+            document.getElementById('logbox').style.display='block';
+            document.getElementById('pnd').innerText=n;
+            document.getElementById('pt').style.display='block';
+            document.getElementById('pc').classList.add('active');
+            addLog('🌌 Arcane Clash 시작! 카드를 리더기에 대세요!','sys');
+            sparkle(window.innerWidth/2,150,'#ffd200');
+        }
+    }catch(e){ alert('오류: '+e.message); document.getElementById('sts').innerHTML=''; }
+}
+
+// ===== 카드 인식 =====
+function onCard(){
+    if(!gid||busy) return;
+    if(document.getElementById('pt').style.display!=='block') return;
+    doDraw();
+}
+
+async function doDraw(){
+    if(busy||!gid) return;
+    busy=true;
+    addLog('🃏 카드 인식됨! 드로우 중...','sys');
+    try{
+        const d=await api('drawCard',{gameId:gid});
+        if(d.success){
+            const c=d.card;
+            const typeMap={Attack:'⚔️ 공격 카드',Heal:'💚 회복 카드',Defense:'🛡️ 방어 카드'};
+            const colorMap={Attack:'type-attack',Heal:'type-heal',Defense:'type-defense'};
+            document.getElementById('cn').innerText='✨ '+c.name;
+            document.getElementById('ct').className='card-type '+(colorMap[c.type]||'');
+            document.getElementById('ct').innerText=typeMap[c.type]||c.type;
+            document.getElementById('cd').innerText=c.desc;
+            document.getElementById('drawn').style.display='block';
+            document.getElementById('promptarea').style.display='block';
+
+            const sp=document.getElementById('psp').innerText;
+            document.getElementById('spbtn').style.display=sp.includes('READY')?'block':'none';
+
+            document.getElementById('pi').value='';
+            document.getElementById('pi').focus();
+            addLog('🃏 '+c.name+' ('+c.type+') 드로우!','sys');
+            sparkle(window.innerWidth/2,window.innerHeight/2,'#667eea');
+        }
+    }catch(e){ console.error(e); }
+    busy=false;
+}
+
+// ===== 주문 시전 =====
+async function cast(isSp){
+    const p=document.getElementById('pi').value.trim();
+    if(!p) return alert('주문을 입력하세요!');
+
+    document.getElementById('drawn').style.display='none';
+    document.getElementById('promptarea').style.display='none';
+    document.getElementById('pt').style.display='none';
+    document.getElementById('pc').classList.remove('active');
+    document.getElementById('think').style.display='block';
+    busy=true;
+
+    try{
+        await api('playerTurn',{gameId:gid,prompt:p,isSpecial:isSp});
+        await refresh();
+        sparkle(window.innerWidth/2,window.innerHeight/2,'#ffd200');
+
+        // AI 턴
+        document.getElementById('thinktext').innerText='🤖 Arcane Guardian의 반격';
+        document.getElementById('ac').classList.add('active');
+        await delay(2200);
+
+        await api('aiTurn',{gameId:gid});
+        await refresh();
+        shake();
+
+        document.getElementById('think').style.display='none';
+        document.getElementById('thinktext').innerText='🤖 AI가 주문을 해석 중';
+        document.getElementById('ac').classList.remove('active');
+        document.getElementById('pi').value='';
+    }catch(e){
+        console.error(e);
+        document.getElementById('think').style.display='none';
+    }
+    busy=false;
+}
+
+// ===== 상태 갱신 =====
+async function refresh(){
+    if(!gid) return;
+    try{
+        const d=await api('getState',{gameId:gid});
+        if(!d.success) return;
+        const g=d.game;
+
+        // HP 갱신
+        const pEl=document.getElementById('php');
+        const aEl=document.getElementById('ahp');
+        pEl.style.width=Math.max(g.playerHP,3)+'%'; pEl.innerText=g.playerHP;
+        aEl.style.width=Math.max(g.aiHP,3)+'%';     aEl.innerText=g.aiHP;
+        pEl.classList.toggle('hplow',g.playerHP<=30);
+        aEl.classList.toggle('hplow',g.aiHP<=30);
+
+        // 턴 카운터
+        document.getElementById('tc').innerText='턴 '+g.turnNum+'/25';
+
+        // 플레이어 턴 표시
+        const isMyTurn=g.status==='WAITING_CARD'||g.status==='PLAYER_PROMPT';
+        document.getElementById('pt').style.display=isMyTurn?'block':'none';
+        document.getElementById('pc').classList.toggle('active',isMyTurn);
+
+        // 스페셜 뱃지
+        const sp=document.getElementById('psp');
+        if(g.playerSpecial==='READY'){sp.innerText='⚡ 스페셜 READY';sp.className='badge b-ready';}
+        else{sp.innerText='⚡ 사용됨';sp.className='badge b-used';}
+
+        // 스토리 로그
+        if(g.lastStory&&g.lastStory!==lastStory&&g.turnNum>0){
+            lastStory=g.lastStory;
+            let cls='';
+            if(g.lastRGB==='RED'||g.lastRGB==='RAINBOW')cls='atk';
+            else if(g.lastRGB==='GREEN')cls='heal';
+            else if(g.lastRGB==='CYAN')cls='def';
+            else if(g.lastRGB==='YELLOW'||g.lastRGB==='GOLD_PULSE')cls='crit';
+            addLog(g.lastStory,cls);
+            if(wtr) wtr.write('RGB:'+g.lastRGB+'\n');
         }
 
-        // API 호출 헬퍼
-        async function api(action, params){
-            const qs=params?'&'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&'):'';
-            const url=API+'?action='+action+qs;
-            const res=await fetch(url);
-            return await res.json();
+        // 게임 종료
+        if(g.status==='FINISHED'){
+            const won=g.playerHP>0;
+            document.getElementById('wtx').innerText=won?'🏆 VICTORY!':'💀 DEFEAT...';
+            document.getElementById('wsub').innerText=won?'AI를 물리쳤습니다! 대단해요!':'Arcane Guardian에게 패배했습니다...';
+            if(won) sparkle(window.innerWidth/2,window.innerHeight/2,'#ffd200');
+            setTimeout(()=>{ document.getElementById('go').style.display='flex'; },800);
         }
+    }catch(e){ console.error(e); }
+}
 
-        async function startGame(){
-            const n=document.getElementById('pname').value.trim();
-            if(!n)return alert('닉네임 입력!');
-            const d=await api('startGame',{player:n});
-            if(d.success){
-                gid=d.gameId;
-                document.getElementById('lobby').style.display='none';
-                document.getElementById('arena').style.display='grid';
-                document.getElementById('drawarea').style.display='block';
-                document.getElementById('logbox').style.display='block';
-                document.getElementById('pnd').innerText=n;
-                addLog('🌌 게임 시작! 카드를 리더기에 대세요!','def');
-                refresh();
-            }
-        }
+// ===== 로그 추가 =====
+function addLog(text,cls=''){
+    const l=document.getElementById('log');
+    const d=document.createElement('div');
+    d.className='entry '+(cls||'');
+    d.innerText=text;
+    l.appendChild(d);
+    l.scrollTop=l.scrollHeight;
+}
 
-        function onCard(){
-            if(!gid||busy)return;
-            const s=document.getElementById('pt').style.display;
-            if(s!=='block')return;
-            doDraw();
-        }
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
-        async function doDraw(){
-            if(busy||!gid)return;
-            busy=true;
-            const d=await api('drawCard',{gameId:gid});
-            if(d.success){
-                const c=d.card;
-                document.getElementById('drawn').style.display='block';
-                document.getElementById('cn').innerText='✨ '+c.name;
-                document.getElementById('ct').innerText=c.type;
-                document.getElementById('cd').innerText=c.desc;
-                document.getElementById('promptarea').style.display='block';
-                document.getElementById('pi').focus();
+document.getElementById('pi').addEventListener('keypress',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); cast(false); }
+});
 
-                // 덱 태그 업데이트
-                const emoji=c.type==='Attack'?'⚔️':c.type==='Heal'?'💚':'🛡️';
-                addLog('🃏 '+emoji+' '+c.name+' ('+c.type+') 뽑힘!','def');
-
-                sparkle(window.innerWidth/2, window.innerHeight/2, '#667eea');
-            }
-            busy=false;
-        }
-
-        async function cast(isSp){
-            const p=document.getElementById('pi').value.trim();
-            if(!p)return alert('주문을 입력하세요!');
-            document.getElementById('drawn').style.display='none';
-            document.getElementById('promptarea').style.display='none';
-            document.getElementById('think').style.display='block';
-            busy=true;
-
-            await api('playerTurn',{gameId:gid,prompt:p,isSpecial:isSp});
-            await refresh();
-            document.getElementById('think').style.display='none';
-            sparkle(window.innerWidth/2, window.innerHeight/2, '#ffd200');
-
-            // AI 턴
-            document.getElementById('think').innerText='🤖 Arcane Guardian의 차례...';
-            document.getElementById('think').style.display='block';
-            setTimeout(async()=>{
-                await api('aiTurn',{gameId:gid});
-                await refresh();
-                document.getElementById('think').style.display='none';
-                document.getElementById('think').innerText='🤖 AI가 주문을 해석 중...';
-                document.getElementById('pi').value='';
-                busy=false;
-            },2000);
-        }
-
-        async function refresh(){
-            if(!gid)return;
-            const d=await api('getState',{gameId:gid});
-            if(!d.success)return;
-            const g=d.game;
-
-            document.getElementById('php').style.width=Math.max(g.playerHP,3)+'%';
-            document.getElementById('php').innerText=g.playerHP;
-            document.getElementById('ahp').style.width=Math.max(g.aiHP,3)+'%';
-            document.getElementById('ahp').innerText=g.aiHP;
-            document.getElementById('php').classList.toggle('hplow',g.playerHP<=30);
-            document.getElementById('ahp').classList.toggle('hplow',g.aiHP<=30);
-            document.getElementById('tc').innerText='턴 '+g.turnNum+'/25';
-
-            const isP=g.status==='WAITING_CARD'||g.status==='PLAYER_PROMPT';
-            document.getElementById('pt').style.display=isP?'block':'none';
-            document.getElementById('pc').classList.toggle('active',isP);
-            document.getElementById('ac').classList.toggle('active',g.status==='AI_TURN');
-
-            document.getElementById('psp').innerText=g.playerSpecial==='READY'?'⚡ 스페셜 READY':'⚡ 사용됨';
-            document.getElementById('psp').style.background=g.playerSpecial==='READY'?'#ffd200':'#555';
-            document.getElementById('psp').style.color=g.playerSpecial==='READY'?'#333':'#999';
-
-            if(g.lastStory&&g.lastStory!==lastStory&&g.turnNum>0){
-                lastStory=g.lastStory;
-                let cls='';
-                if(g.lastRGB==='RED'||g.lastRGB==='RAINBOW')cls='atk';
-                else if(g.lastRGB==='GREEN')cls='heal';
-                else if(g.lastRGB==='CYAN')cls='def';
-                else if(g.lastRGB==='YELLOW')cls='crit';
-                addLog(g.lastStory,cls);
-                if(wtr)wtr.write('RGB:'+g.lastRGB+'\n');
-            }
-
-            if(g.status==='FINISHED'){
-                const won=g.playerHP>0;
-                document.getElementById('wtx').innerText=won?'🏆 VICTORY!':'💀 DEFEAT...';
-                document.getElementById('wsub').innerText=won?'AI를 물리쳤습니다!':'AI에게 패배했습니다...';
-                setTimeout(()=>{document.getElementById('go').style.display='flex'},500);
-            }
-        }
-
-        function addLog(text,cls=''){
-            const l=document.getElementById('log');
-            const d=document.createElement('div');
-            d.className='entry '+cls;
-            d.innerText=text;
-            l.appendChild(d);
-            l.scrollTop=l.scrollHeight;
-        }
-
-        setInterval(refresh,2000);
-
-        document.getElementById('pi').addEventListener('keypress',e=>{
-            if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();cast(false)}
-        });
-    </script>
+setInterval(()=>{ if(gid&&!busy) refresh(); }, 3000);
+</script>
 </body>
 </html>
