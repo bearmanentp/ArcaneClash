@@ -121,7 +121,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 const API = "https://script.google.com/macros/s/AKfycbzufMSNbj2LhmNstbUwnkpywbmjeHHJ8Hich7-qYytOD-gOD4CIVp4QXPg2p1BeiN-VLQ/exec";
 let gid=null,port=null,wtr=null,busy=false,ls="",curUid=null,curCard=null;
 let timerInterval = null;
-let timeLeft = 20;
+let timeLeft = 30;
 
 // ===== 효과음 =====
 function playSound(type) {
@@ -141,10 +141,10 @@ function playSound(type) {
   } catch(e) {}
 }
 
-// ===== 타이머 (20초 고정) =====
+// ===== 타이머 (30초 고정) =====
 function startTimer() {
   clearInterval(timerInterval);
-  timeLeft = 20;
+  timeLeft = 30;
   updateTurnText();
 
   timerInterval = setInterval(() => {
@@ -248,7 +248,7 @@ async function drawCard(uid){
       showStory(d.story);
       if(wtr)wtr.write('RGB:PURPLE\n');
       flash('rgba(102,126,234,.3)');
-      // drawCard 성공 시 타이머는 재시작하지 않음 (이미 진행 중)
+      // drawCard 성공 시 타이머는 재시작하지 않음
     } else {
       log('❌ '+(d.message||d.error||'오류'),'sy');
     }
@@ -345,6 +345,38 @@ function endGame(win){
 
 function showStory(t){document.getElementById('story-text').innerText=t;document.getElementById('story-box').style.display='block'}
 function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
+
+async function ref(){
+  if(!gid||busy)return;
+  try{
+    const d=await api('getState',{gameId:gid});
+    if(!d.success||!d.game)return;
+    const g=d.game;
+    updateHP(g.playerHP, g.aiHP);
+    document.getElementById('tc').innerText=`턴 ${g.turnNum}`;
+    const sp=document.getElementById('ps');
+    if(g.playerSpecial==='READY'){sp.innerText='⚡ READY';sp.className='badge br'}
+    else{sp.innerText='⚡ USED';sp.className='badge bu'}
+    if(g.lastStory&&g.lastStory!==ls&&g.turnNum>0){
+      ls=g.lastStory;
+      let c='';
+      if(g.lastRGB==='RED'||g.lastRGB==='RAINBOW')c='at';
+      else if(g.lastRGB==='GREEN')c='he';
+      else if(g.lastRGB==='CYAN')c='de';
+      else if(g.lastRGB==='YELLOW'||g.lastRGB==='GOLD_PULSE')c='cr';
+      log(g.lastStory,c);
+    }
+    if(g.status==='FINISHED'){
+      const w=g.playerHP>0;
+      document.getElementById('wt').innerText=w?'🏆 VICTORY!':'💀 DEFEAT...';
+      document.getElementById('ws').innerText=win?'AI를 물리쳤습니다!':'패배했습니다...';
+      if(w){if(wtr)wtr.write('RGB:GOLD_PULSE\n');flash('rgba(255,210,0,.3)');}
+      else{if(wtr)wtr.write('RGB:BLINK_RED\n');}
+      setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
+    }
+  }catch(e){console.error(e)}
+}
+
 setInterval(()=>{if(gid&&!busy)ref()},3000);
 </script>
 </body>
