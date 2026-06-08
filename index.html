@@ -168,7 +168,8 @@ function updateTurnText() {
 
 async function autoEndTurn() {
   if (!gid || busy) return;
-  busy = true;
+  
+  busy = false; // ★ 먼저 busy를 false로 변경
   stopTimer();
   document.getElementById('pt').style.display = 'none';
   document.getElementById('pc').classList.remove('on');
@@ -179,11 +180,10 @@ async function autoEndTurn() {
 
   try {
     await api('aiTurn', {gameId: gid});
-    await ref();
+    await ref(); // ★ busy가 false 상태에서 ref() 호출
   } catch(e) { console.error(e); }
   
   document.getElementById('th').style.display = 'none';
-  busy = false;
 }
 
 // ===== 기존 함수 =====
@@ -248,7 +248,6 @@ async function drawCard(uid){
       showStory(d.story);
       if(wtr)wtr.write('RGB:PURPLE\n');
       flash('rgba(102,126,234,.3)');
-      // drawCard 성공 시 타이머는 재시작하지 않음
     } else {
       log('❌ '+(d.message||d.error||'오류'),'sy');
     }
@@ -369,7 +368,7 @@ async function ref(){
     if(g.status==='FINISHED'){
       const w=g.playerHP>0;
       document.getElementById('wt').innerText=w?'🏆 VICTORY!':'💀 DEFEAT...';
-      document.getElementById('ws').innerText=win?'AI를 물리쳤습니다!':'패배했습니다...';
+      document.getElementById('ws').innerText=w?'AI를 물리쳤습니다!':'패배했습니다...';
       if(w){if(wtr)wtr.write('RGB:GOLD_PULSE\n');flash('rgba(255,210,0,.3)');}
       else{if(wtr)wtr.write('RGB:BLINK_RED\n');}
       setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
