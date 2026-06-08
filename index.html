@@ -178,13 +178,11 @@ async function autoEndTurn() {
   document.getElementById('dc').style.display = 'none';
   document.getElementById('pa').style.display = 'none';
 
-  // 시간 초과 서사
   const playerName = document.getElementById('pn').innerText;
   const timeoutStory = "⏰ 시간이 초과되어 " + playerName + "은(는) 공격을 하지 못했다.";
   showStory(timeoutStory);
   log(timeoutStory, 'sy');
 
-  // AI 턴으로 넘김
   document.getElementById('ac').classList.add('on');
   await new Promise(r => setTimeout(r, 1500));
 
@@ -221,8 +219,10 @@ async function startGame(){
   if(!n)return alert('닉네임 입력!');
   try{
     const d=await api('startGame',{player:n});
+    console.log('startGame 응답:', d);
     if(d.success){
       gid=d.gameId;
+      console.log('게임 ID 설정:', gid);
       document.getElementById('lobby').style.display='none';
       document.getElementById('ar').style.display='grid';
       document.getElementById('da').style.display='block';
@@ -233,6 +233,8 @@ async function startGame(){
       log('🌌 Arcane Clash 시작!','sy');
       showStory('🌌 운명의 대결이 펼쳐진다...');
       startTimer(); // ★ 게임 시작과 동시에 타이머 작동
+    } else {
+      document.getElementById('ms').innerHTML='❌ '+(d.error||d.message||'오류');
     }
   }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
@@ -241,6 +243,7 @@ async function drawCard(uid){
   if(busy||!gid)return;busy=true;
   try{
     const d=await api('drawCard',{gameId:gid,uid:uid});
+    console.log('drawCard 응답:', d);
     if(d.success){
       curUid=d.uid||uid;
       curCard=d.card;
@@ -281,6 +284,7 @@ async function cast(isSp){
 
   try{
     const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid});
+    console.log('playerTurn 응답:', d);
     if(d.success){
       updateHP(d.playerHP, d.aiHP);
       showStory(d.story);
@@ -309,6 +313,7 @@ async function cast(isSp){
     await new Promise(r=>setTimeout(r,2000));
 
     const ai=await api('aiTurn',{gameId:gid});
+    console.log('aiTurn 응답:', ai);
     if(ai&&ai.success){
       updateHP(ai.playerHP, ai.aiHP);
       showStory('🤖 '+ai.story);
@@ -357,7 +362,7 @@ function showStory(t){document.getElementById('story-text').innerText=t;document
 function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
 
 async function ref(){
-  if(!gid) return;  // ★ busy 체크 제거
+  if(!gid) return;
   try{
     const d=await api('getState',{gameId:gid});
     if(!d.success||!d.game)return;
