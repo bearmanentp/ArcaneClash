@@ -6,163 +6,139 @@
 <title>🌌 Arcane Clash</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#0f0c29;color:#fff;min-height:100vh;overflow-x:hidden}
-h1{text-align:center;font-size:2.8em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sub{text-align:center;color:#aaa;margin-bottom:15px;font-size:.95em}
-.box{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:20px;margin:12px auto;max-width:780px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
-input,textarea{width:100%;padding:12px;font-size:15px;border-radius:10px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;margin:6px 0;resize:none;outline:none}
-input:focus,textarea:focus{border-color:#667eea;box-shadow:0 0 15px rgba(102,126,234,.3)}
-button{padding:12px 24px;font-size:15px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px;transition:all .25s}
-button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
-button:active{transform:scale(.98)}
-.but{background:#333;color:#fff}.bma{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.bat{background:linear-gradient(135deg,#f50057,#ff1744);color:#fff;width:100%}
-.bhe{background:linear-gradient(135deg,#00c853,#69f0ae);color:#222;width:100%}
-.bde{background:linear-gradient(135deg,#00bcd4,#29b6f6);color:#fff;width:100%}
-.bsp{background:linear-gradient(135deg,#ffd200,#ffab00);color:#222;width:100%}
-.arena{display:none;grid-template-columns:1fr 80px 1fr;gap:15px;align-items:center}
-.pc{background:rgba(255,255,255,.06);border-radius:14px;padding:16px;text-align:center;border:2px solid rgba(255,255,255,.08);transition:all .4s}
-.pc.on{border-color:#ffd200;box-shadow:0 0 35px rgba(255,210,0,.25)}
-.pc.win{border-color:#00c853;box-shadow:0 0 35px rgba(0,200,83,.3)}
-.pc.lose{opacity:.35;filter:grayscale(.6)}
-.hpb{height:28px;background:rgba(0,0,0,.5);border-radius:8px;overflow:hidden;margin:8px 0}
-.hp{height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85em;transition:width .6s cubic-bezier(.4,0,.2,1);border-radius:8px;min-width:24px}
-.hpp{background:linear-gradient(90deg,#00c853,#69f0ae)}
-.hpa{background:linear-gradient(90deg,#f50057,#ff1744)}
-.hpl{animation:blink .6s infinite}@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.vs{font-size:2.2em;font-weight:900;color:#ffd200;text-shadow:0 0 20px rgba(255,210,0,.5)}
-.bd{display:inline-block;padding:3px 12px;border-radius:14px;font-size:.72em;font-weight:bold;margin-top:4px;transition:all .3s}
-.bdr{background:#ffd200;color:#222}.bdu{background:#333;color:#777}
-.tm{color:#ffd200;font-weight:bold;margin-top:6px;display:none;animation:bounce .8s infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.dc{display:none;background:linear-gradient(135deg,rgba(102,126,234,.15),rgba(118,75,162,.15));border:2px solid #667eea;border-radius:14px;padding:18px;margin:12px 0;text-align:center;animation:cardIn .5s}
-@keyframes cardIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-.cn{font-size:1.5em;font-weight:bold;margin-bottom:4px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.cp{font-size:2em;font-weight:900;margin:6px 0;color:#ffd200}
-.cta{color:#ff1744;font-weight:bold}.cth{color:#00c853;font-weight:bold}.ctd{color:#00bcd4;font-weight:bold}
-.pa{display:none;margin-top:12px}
-.sp{display:none}.sa{display:none}
-#lg{max-height:320px;overflow-y:auto;padding:10px;background:rgba(0,0,0,.3);border-radius:12px;margin-top:10px}
-.en{padding:12px 14px;margin:6px 0;border-radius:10px;background:rgba(255,255,255,.06);border-left:4px solid #667eea;animation:slide .35s;font-size:.85em;line-height:1.5}
-.en.at{border-left-color:#ff1744}.en.he{border-left-color:#00c853}.en.de{border-left-color:#00bcd4}
-.en.cr{border-left-color:#ffd200;background:rgba(255,210,0,.1);font-weight:bold}.en.sy{border-left-color:#555;color:#888;font-size:.8em}
-@keyframes slide{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
-.th{display:none;text-align:center;padding:20px;font-size:1.3em;color:#ff6b6b}
-#story-box{display:none;margin-top:15px;padding:18px;background:rgba(255,210,0,.08);border:1px solid rgba(255,210,0,.25);border-radius:14px;text-align:center;animation:storyIn .5s}
-@keyframes storyIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-#story-text{font-size:1.05em;line-height:1.7;color:#ffd200;font-style:italic}
+body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
+h1{text-align:center;font-size:2.6em;padding:20px 0 4px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{text-align:center;color:#666;margin-bottom:15px;font-size:.88em}
+.box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;margin:12px auto;max-width:760px}
+input,textarea{width:100%;padding:12px;font-size:15px;border-radius:10px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;margin:6px 0;resize:none;outline:none}
+input:focus,textarea:focus{border-color:#667eea}
+button{padding:11px 22px;font-size:14px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px;transition:all .2s}
+button:hover{transform:translateY(-2px)}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.b1{background:#222;color:#fff}.b2{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.ba{background:linear-gradient(135deg,#e53935,#ff1744);color:#fff;width:100%}
+.bh{background:linear-gradient(135deg,#00c853,#69f0ae);color:#111;width:100%}
+.bd{background:linear-gradient(135deg,#00acc1,#29b6f6);color:#fff;width:100%}
+.bs{background:linear-gradient(135deg,#ffd200,#ffab00);color:#222;width:100%;animation:gl 2s infinite}
+@keyframes gl{0%,100%{box-shadow:0 0 5px #ffd200}50%{box-shadow:0 0 20px #ffd200}}
+.arena{display:none;grid-template-columns:1fr 70px 1fr;gap:14px;align-items:center}
+.pc{background:rgba(255,255,255,.05);border-radius:14px;padding:16px;text-align:center;border:2px solid rgba(255,255,255,.08);transition:all .4s}
+.pc.on{border-color:#ffd200;box-shadow:0 0 30px rgba(255,210,0,.2)}
+.hpb{height:26px;background:rgba(0,0,0,.5);border-radius:8px;overflow:hidden;margin:8px 0}
+.hp{height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.82em;transition:width .6s;border-radius:8px;min-width:22px}
+.hp1{background:linear-gradient(90deg,#00c853,#69f0ae)}.hp2{background:linear-gradient(90deg,#e53935,#ff1744)}
+.hpl{animation:bl .5s infinite}@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.vs{font-size:2em;font-weight:900;color:#ffd200}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7em;font-weight:bold;margin-top:4px}
+.br{background:#ffd200;color:#222}.bu{background:#333;color:#666}
+.tm{color:#ffd200;font-weight:bold;margin-top:6px;display:none;animation:bn .7s infinite}
+@keyframes bn{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.dc{display:none;background:linear-gradient(135deg,rgba(102,126,234,.12),rgba(118,75,162,.12));border:2px solid #667eea;border-radius:14px;padding:18px;margin:12px 0;text-align:center;animation:ci .4s}
+@keyframes ci{from{transform:scale(.92) rotateY(90deg);opacity:0}to{transform:scale(1) rotateY(0);opacity:1}}
+.cn{font-size:1.4em;font-weight:bold;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cp{font-size:2.2em;font-weight:900;color:#ffd200;margin:4px 0;text-shadow:0 0 15px rgba(255,210,0,.5)}
+.pa{display:none;margin-top:10px}
+#lg{max-height:300px;overflow-y:auto;padding:10px;background:rgba(0,0,0,.3);border-radius:10px}
+.en{padding:10px 12px;margin:5px 0;border-radius:8px;background:rgba(255,255,255,.05);border-left:4px solid #667eea;animation:sl .3s;font-size:.84em;line-height:1.5}
+.en.at{border-left-color:#ff1744;background:rgba(255,23,68,.06)}
+.en.he{border-left-color:#00c853;background:rgba(0,200,83,.06)}
+.en.de{border-left-color:#00bcd4;background:rgba(0,188,212,.06)}
+.en.cr{border-left-color:#ffd200;background:rgba(255,210,0,.08);font-weight:bold}
+.en.sy{border-left-color:#444;color:#777;font-size:.78em}
+@keyframes sl{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+#story-box{display:none;margin:12px auto;max-width:760px;padding:16px 20px;background:rgba(255,210,0,.06);border:1px solid rgba(255,210,0,.2);border-radius:14px;text-align:center;animation:si .5s}
+@keyframes si{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+#story-text{font-size:1em;line-height:1.7;color:#ffd200;font-style:italic}
+.th{display:none;text-align:center;padding:18px;font-size:1.2em;color:#ff6b6b}
 #ov{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.96);z-index:1000;flex-direction:column;justify-content:center;align-items:center}
-.wt{font-size:4em;font-weight:900;margin-bottom:15px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:winPulse 1.5s infinite}
-@keyframes winPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
-.dmg{position:fixed;font-size:2.5em;font-weight:900;pointer-events:none;z-index:100;animation:dmgFly 1s forwards}
-@keyframes dmgFly{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-120%) scale(1.4)}}
+.wt{font-size:3.8em;font-weight:900;margin-bottom:12px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:wp 1.5s infinite}
+@keyframes wp{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+#cv{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
+.dmg{position:fixed;font-size:2.8em;font-weight:900;pointer-events:none;z-index:100;animation:df 1.2s forwards;text-shadow:0 0 20px currentColor}
+@keyframes df{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}30%{transform:translate(-50%,-70%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-150%) scale(1)}}
+.flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;animation:fl .4s forwards}
+@keyframes fl{0%{opacity:.4}100%{opacity:0}}
 </style>
 </head>
 <body>
-<canvas id="particles"></canvas>
-
+<canvas id="cv"></canvas>
 <h1>🌌 Arcane Clash</h1>
-<p class="sub">카드마다 랜덤 능력! AI가 만드는 스토리!</p>
+<p class="sub">카드마다 랜덤 능력! AI가 만드는 전투 서사!</p>
 
 <div class="box" id="lobby">
 <input type="text" id="nm" placeholder="닉네임 입력" maxlength="12">
 <div style="display:flex;gap:8px;margin-top:4px">
-<button class="but" onclick="connectUSB()" id="ub">🔌 USB</button>
-<button class="bma" onclick="startGame()">⚔️ 게임 시작</button>
+<button class="b1" onclick="connectUSB()" id="ub">🔌 USB</button>
+<button class="b2" onclick="startGame()">⚔️ 게임 시작</button>
 </div>
-<div id="ms" style="margin-top:8px;font-weight:bold;color:#aaa"></div>
+<div id="ms" style="margin-top:8px;font-weight:bold;color:#666"></div>
 </div>
 
 <div class="box arena" id="ar">
 <div class="pc" id="pc">
-<h2 id="pn" style="font-size:1.15em;margin-bottom:2px">Player</h2>
-<div id="pcardinfo" style="font-size:.7em;color:#888;margin-bottom:2px"></div>
-<div class="hpb"><div class="hp hpp" id="ph" style="width:100%">100</div></div>
-<div id="ps" class="bd bdr">⚡ READY</div>
+<h2 id="pn" style="font-size:1.1em">Player</h2>
+<div class="hpb"><div class="hp hp1" id="ph" style="width:100%">100</div></div>
+<div id="ps" class="badge br">⚡ READY</div>
 <div class="tm" id="pt">▶ YOUR TURN</div>
 </div>
-<div style="text-align:center">
-<span class="vs">⚔️</span><br>
-<span style="color:#aaa;font-size:.7em" id="tc">0/25</span>
-</div>
+<div style="text-align:center"><span class="vs">⚔️</span><br><span style="color:#555;font-size:.7em" id="tc">0/25</span></div>
 <div class="pc" id="ac">
-<h2 style="font-size:1.15em">🤖 Guardian</h2>
-<div id="aicardinfo" style="font-size:.7em;color:#888;margin-bottom:2px"></div>
-<div class="hpb"><div class="hp hpa" id="ah" style="width:100%">100</div></div>
+<h2 style="font-size:1.1em">🤖 Guardian</h2>
+<div class="hpb"><div class="hp hp2" id="ah" style="width:100%">100</div></div>
 </div>
 </div>
 
 <div class="th" id="th">🤖 AI가 마법을 준비 중...</div>
 
 <div class="box" id="da" style="display:none">
-<h2>🃏 카드를 리더기에 대주세요!</h2>
-<p style="color:#666;font-size:.8em">뽑을 때마다 랜덤 능력이 부여됩니다</p>
+<h2 style="margin-bottom:4px">🃏 카드를 리더기에 대주세요!</h2>
+<p style="color:#555;font-size:.78em">카드마다 랜덤 능력이 부여됩니다</p>
 <div class="dc" id="dc">
 <div class="cn" id="cn"></div>
-<div class="cp" id="cp"></div>
-<div id="ct"></div>
-<div style="color:#aaa;font-size:.85em;margin-top:4px" id="cd"></div>
+<div class="cp" id="cpw"></div>
+<div id="ct" style="font-weight:bold;margin:4px 0"></div>
 </div>
 <div class="pa" id="pa">
-<div class="sa" id="sa">
-<textarea id="pi" rows="3" placeholder="✨ 시전할 주문을 입력하세요!&#10;예: 불꽃이 폭발하듯 베어라!"></textarea>
-<div style="display:flex;gap:8px;margin-top:6px">
-<button class="bat" onclick="cast('Attack')">⚔️ 공격 시전</button>
-<button class="bhe" onclick="cast('Heal')">💚 회복 시전</button>
-<button class="bde" onclick="cast('Defense')">🛡️ 방어 시전</button>
-</div>
-<button class="bsp" onclick="castSpecial()" id="sb" style="display:none;margin-top:6px">⚡ 스페셜 시전! (데미지 2배)</button>
+<textarea id="pi" rows="2" placeholder="✨ 시전할 주문을 입력하세요!"></textarea>
+<div style="display:flex;gap:6px;margin-top:6px">
+<button class="ba" onclick="cast(false)">⚔️ 시전</button>
+<button class="bs" onclick="cast(true)" id="sb" style="display:none">⚡ 스페셜!</button>
 </div>
 </div>
 </div>
 
-<div class="box" id="story-box">
-<h3 style="margin-bottom:8px;font-size:.95em;color:#ffd200">📖 AI 전투 서사</h3>
-<div id="story-text"></div>
-</div>
+<div id="story-box"><div id="story-text"></div></div>
 
-<div class="box" id="lb" style="display:none">
-<h3 style="margin-bottom:8px">📜 전투 로그</h3>
-<div id="lg"></div>
-</div>
+<div class="box" id="lb" style="display:none"><h3 style="margin-bottom:6px;font-size:.95em">📜 전투 로그</h3><div id="lg"></div></div>
 
 <div id="ov">
 <div class="wt" id="wt"></div>
-<p style="color:#aaa;margin-bottom:25px;font-size:1.1em" id="ws"></p>
-<div style="font-size:1.2em;color:#ffd200;margin-bottom:20px" id="final-story"></div>
-<button onclick="location.reload()" style="padding:14px 45px;font-size:1.1em;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:14px;cursor:pointer">🔄 다시 하기</button>
+<p style="color:#888;margin-bottom:20px" id="ws"></p>
+<button onclick="location.reload()" style="padding:14px 40px;font-size:1.1em;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;cursor:pointer">🔄 다시 하기</button>
 </div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbzteabFzC9ENn4OODYO8jt7FrdoXo08CU4YC4_p-v1vQYUF9IIA3_eDmwh8Xg_xvqdWWQ/exec";
-
-let gid=null,port=null,wtr=null,busy=false,ls="",pendingUID=null,pendingCard=null;
+const API="https://script.google.com/macros/s/AKfycbx63YuO6WRo--m3BKTy2DVv8Re5BdW__E_IqB11KKQqhVskH5GM86J_4muodEyoBUzy/exec";
+let gid=null,port=null,wtr=null,busy=false,ls="",curCard=null;
 
 // 파티클
-const cv=document.getElementById('particles'),cx=cv.getContext('2d');
-function rsz(){cv.width=innerWidth;cv.height=innerHeight}
-rsz();addEventListener('resize',rsz);
-const pts=[];
-for(let i=0;i<65;i++)pts.push({
-  x:Math.random()*cv.width,y:Math.random()*cv.height,
-  vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,
-  s:Math.random()*2+.5,o:Math.random()*.35+.1,
-  c:['255,210,0','102,126,234','118,75,162'][i%3]
-});
-!function a(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{
-  p.x+=p.vx;p.y+=p.vy;
-  if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;
-  cx.beginPath();cx.arc(p.x,p.y,p.s,0,6.28);
-  cx.fillStyle='rgba('+p.c+','+p.o+')';cx.fill()
-});requestAnimationFrame(a)}();
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+function rsz(){cv.width=innerWidth;cv.height=innerHeight}rsz();addEventListener('resize',rsz);
+const pts=[];for(let i=0;i<55;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,s:Math.random()*2+.5,o:Math.random()*.3+.08,c:['255,210,0','102,126,234','118,75,162'][i%3]});
+!function a(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.s,0,6.28);cx.fillStyle='rgba('+p.c+','+p.o+')';cx.fill()});requestAnimationFrame(a)}();
 
-function dmgFx(x,y,val,color='#ffd200'){
+// 화면 플래시
+function flash(color){
+  const f=document.createElement('div');f.className='flash';f.style.background=color;
+  document.body.appendChild(f);setTimeout(()=>{try{document.body.removeChild(f)}catch(e){}},500);
+}
+
+// 데미지 숫자
+function dmgFx(x,y,val,color){
   const d=document.createElement('div');d.className='dmg';
-  d.style.cssText='left:'+x+'px;top:'+y+'px;color:'+color+';text-shadow:0 0 20px '+color;
-  d.innerText=val;
-  document.body.appendChild(d);
-  setTimeout(()=>{try{document.body.removeChild(d)}catch(e){}},1200);
+  d.style.cssText='left:'+x+'px;top:'+y+'px;color:'+color;
+  d.innerText=val;document.body.appendChild(d);
+  setTimeout(()=>{try{document.body.removeChild(d)}catch(e){}},1400);
 }
 
 async function api(action,params){
@@ -174,28 +150,18 @@ async function api(action,params){
 async function connectUSB(){
   if(!("serial"in navigator))return alert("Chrome 사용!");
   try{
-    port=await navigator.serial.requestPort();
-    await port.open({baudRate:115200});
+    port=await navigator.serial.requestPort();await port.open({baudRate:115200});
     const e=new TextEncoderStream();e.readable.pipeTo(port.writable);wtr=e.writable.getWriter();
     const d=new TextDecoderStream();port.readable.pipeTo(d.writable);const r=d.readable.getReader();
     document.getElementById('ub').innerText='✅';document.getElementById('ub').disabled=true;
     log('🔌 RFID 연결됨','sy');
-    (async()=>{while(true){
-      const{value:v,done}=await r.read();
-      if(done)break;
-      if(v&&v.includes('CARD:')&&!busy){
-        const uid=v.split('CARD:')[1].trim();
-        pendingUID=uid;
-        if(document.getElementById('pt').style.display==='block')drawCard(uid);
-      }
-    }})();
+    (async()=>{while(true){const{value:v,done}=await r.read();if(done)break;if(v&&v.includes('CARD:')&&!busy){const uid=v.split('CARD:')[1].trim();if(document.getElementById('pt').style.display==='block')drawCard(uid);}}})();
   }catch(e){alert(e.message)}
 }
 
 async function startGame(){
   const n=document.getElementById('nm').value.trim();
   if(!n)return alert('닉네임 입력!');
-  document.getElementById('ms').innerHTML='⏳ 게임 시작 중...';
   try{
     const d=await api('startGame',{player:n});
     if(d.success){
@@ -204,124 +170,78 @@ async function startGame(){
       document.getElementById('ar').style.display='grid';
       document.getElementById('da').style.display='block';
       document.getElementById('lb').style.display='block';
-      document.getElementById('story-box').style.display='block';
       document.getElementById('pn').innerText=n;
       document.getElementById('pt').style.display='block';
       document.getElementById('pc').classList.add('on');
-      document.getElementById('sa').style.display='block';
       log('🌌 Arcane Clash 시작!','sy');
-      storyText('🌌 운명의 대결이 펼쳐진다...');
-    } else {
-      document.getElementById('ms').innerHTML='❌ 오류';
+      showStory('🌌 운명의 대결이 펼쳐진다... 카드를 대라!');
     }
   }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
 
 async function drawCard(uid){
-  if(busy||!gid)return;
-  busy=true;
+  if(busy||!gid)return;busy=true;
   try{
     const d=await api('drawCard',{gameId:gid,uid:uid});
     if(d.success){
-      const c=d.card;
-      pendingCard=c;
+      curCard=d.card;
       const tm={Attack:'⚔️ 공격',Heal:'💚 회복',Defense:'🛡️ 방어'};
-      document.getElementById('cn').innerText='✨ '+c.name;
-      document.getElementById('cp').innerText='⚡ '+c.power;
-      document.getElementById('ct').innerText=tm[c.type]||c.type;
-      document.getElementById('cd').innerText='힘: '+c.power;
+      const cc={Attack:'#ff1744',Heal:'#00c853',Defense:'#00bcd4'};
+      document.getElementById('cn').innerText='✨ '+d.card.name;
+      document.getElementById('cpw').innerText='⚡ '+d.card.power;
+      const ct=document.getElementById('ct');
+      ct.innerText=tm[d.card.type]||d.card.type;
+      ct.style.color=cc[d.card.type]||'#fff';
       document.getElementById('dc').style.display='block';
       document.getElementById('pa').style.display='block';
-      document.getElementById('pi').value='';
-      document.getElementById('pi').focus();
-      
-      const s=document.getElementById('ps').innerText;
-      document.getElementById('sb').style.display=s.includes('READY')?'block':'none';
-      
-      const msg='🃏 '+c.name+' ('+tm[c.type]+' 힘:'+c.power+') 드로우!';
-      log(msg,'sy');
-      storyText(msg);
+      document.getElementById('pi').value='';document.getElementById('pi').focus();
+      const sp=document.getElementById('ps').innerText;
+      document.getElementById('sb').style.display=sp.includes('READY')?'inline-block':'none';
+      log('🃏 '+d.card.name+' ('+tm[d.card.type]+' ⚡'+d.card.power+')','sy');
+      showStory(d.story||d.card.name+' 카드 드로우!');
       if(wtr)wtr.write('RGB:PURPLE\n');
-      dmgFx(innerWidth/2,innerHeight/3,'✨'+c.power,'#667eea');
+      flash('rgba(102,126,234,.3)');
     } else {
-      log('❌ '+d.message,'sy');
+      log('❌ '+(d.message||'오류'),'sy');
       if(wtr)wtr.write('RGB:BLINK_RED\n');
     }
   }catch(e){console.error(e)}
   busy=false;
 }
 
-async function cast(suggestType){
+async function cast(isSp){
   const p=document.getElementById('pi').value.trim();
-  if(!p)return alert('주문을 입력하세요!');
-  if(!pendingCard)return alert('카드를 먼저 뽑으세요!');
-  
+  if(!p)return alert('주문 입력!');
   document.getElementById('dc').style.display='none';
   document.getElementById('pa').style.display='none';
   document.getElementById('pt').style.display='none';
   document.getElementById('pc').classList.remove('on');
   document.getElementById('th').style.display='block';
   busy=true;
-  
   try{
-    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:false});
+    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:isSp,uid:''});
     await ref();
-    if(d.story)storyText(d.story);
+    if(d.story)showStory(d.story);
     if(d.action==='ATTACK'){
-      dmgFx(innerWidth/2,innerHeight/2,'-'+d.damage,'#ff1744');
-      if(wtr)wtr.write('RGB:RED\n');
-    } else if(d.action==='HEAL'){
-      dmgFx(innerWidth/2,innerHeight/2,'+'+d.damage,'#00c853');
-      if(wtr)wtr.write('RGB:GREEN\n');
-    } else {
-      if(wtr)wtr.write('RGB:CYAN\n');
+      dmgFx(innerWidth*.7,innerHeight*.35,'-'+d.damage,'#ff1744');
+      flash('rgba(255,23,68,.25)');if(wtr)wtr.write('RGB:RED\n');
+    }else if(d.action==='HEAL'){
+      dmgFx(innerWidth*.3,innerHeight*.35,'+'+d.damage,'#00c853');
+      flash('rgba(0,200,83,.2)');if(wtr)wtr.write('RGB:GREEN\n');
+    }else{
+      flash('rgba(0,188,212,.2)');if(wtr)wtr.write('RGB:CYAN\n');
     }
-    
+    if(isSp){dmgFx(innerWidth/2,innerHeight*.25,'⚡SPECIAL','#ffd200');if(wtr)wtr.write('RGB:YELLOW\n');}
+
     document.getElementById('ac').classList.add('on');
-    document.getElementById('th').innerHTML='🤖 Arcane Guardian의 반격!';
+    document.getElementById('th').innerHTML='🤖 Guardian의 반격!';
     await new Promise(r=>setTimeout(r,2000));
-    
     await api('aiTurn',{gameId:gid});
     await ref();
-    
     document.getElementById('th').style.display='none';
     document.getElementById('th').innerHTML='🤖 AI가 마법을 준비 중...';
     document.getElementById('ac').classList.remove('on');
-    document.getElementById('pi').value='';
-    pendingCard=null;
-  }catch(e){console.error(e);document.getElementById('th').style.display='none'}
-  busy=false;
-}
-
-async function castSpecial(){
-  const p=document.getElementById('pi').value.trim();
-  if(!p)return alert('주문 입력!');
-  if(!pendingCard)return alert('카드 뽑기 먼저!');
-  
-  document.getElementById('dc').style.display='none';
-  document.getElementById('pa').style.display='none';
-  document.getElementById('pt').style.display='none';
-  document.getElementById('pc').classList.remove('on');
-  document.getElementById('th').style.display='block';
-  busy=true;
-  
-  try{
-    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:true});
-    await ref();
-    if(d.story)storyText(d.story);
-    dmgFx(innerWidth/2,innerHeight/2,'⚡ SPECIAL!','#ffd200');
-    if(wtr)wtr.write('RGB:YELLOW\n');
-    
-    document.getElementById('ac').classList.add('on');
-    await new Promise(r=>setTimeout(r,2000));
-    
-    await api('aiTurn',{gameId:gid});
-    await ref();
-    
-    document.getElementById('th').style.display='none';
-    document.getElementById('ac').classList.remove('on');
-    document.getElementById('pi').value='';
-    pendingCard=null;
+    document.getElementById('pi').value='';curCard=null;
   }catch(e){console.error(e);document.getElementById('th').style.display='none'}
   busy=false;
 }
@@ -330,24 +250,20 @@ async function ref(){
   if(!gid)return;
   try{
     const d=await api('getState',{gameId:gid});
-    if(!d.success)return;
-    const g=d.game;
-    const pe=document.getElementById('ph'),ae=document.getElementById('ah');
-    pe.style.width=Math.max(g.playerHP,3)+'%';pe.innerText=g.playerHP;
-    ae.style.width=Math.max(g.aiHP,3)+'%';ae.innerText=g.aiHP;
-    pe.classList.toggle('hpl',g.playerHP<=30);ae.classList.toggle('hpl',g.aiHP<=30);
+    if(!d.success)return;const g=d.game;
+    document.getElementById('ph').style.width=Math.max(g.playerHP,3)+'%';document.getElementById('ph').innerText=g.playerHP;
+    document.getElementById('ah').style.width=Math.max(g.aiHP,3)+'%';document.getElementById('ah').innerText=g.aiHP;
+    document.getElementById('ph').classList.toggle('hpl',g.playerHP<=30);
+    document.getElementById('ah').classList.toggle('hpl',g.aiHP<=30);
     document.getElementById('tc').innerText=g.turnNum+'/25';
     const my=g.status==='WAITING_CARD'||g.status==='PLAYER_PROMPT';
     document.getElementById('pt').style.display=my?'block':'none';
     document.getElementById('pc').classList.toggle('on',my);
     const sp=document.getElementById('ps');
-    if(g.playerSpecial==='READY'){sp.innerText='⚡ READY';sp.className='bd bdr';
-      document.getElementById('sb').style.display='block';}
-    else{sp.innerText='⚡ USED';sp.className='bd bdu';
-      document.getElementById('sb').style.display='none';}
+    if(g.playerSpecial==='READY'){sp.innerText='⚡ READY';sp.className='badge br'}
+    else{sp.innerText='⚡ USED';sp.className='badge bu'}
     if(g.lastStory&&g.lastStory!==ls&&g.turnNum>0){
-      ls=g.lastStory;
-      let c='';
+      ls=g.lastStory;let c='';
       if(g.lastRGB==='RED'||g.lastRGB==='RAINBOW')c='at';
       else if(g.lastRGB==='GREEN')c='he';
       else if(g.lastRGB==='CYAN')c='de';
@@ -358,24 +274,15 @@ async function ref(){
       const w=g.playerHP>0;
       document.getElementById('wt').innerText=w?'🏆 VICTORY!':'💀 DEFEAT...';
       document.getElementById('ws').innerText=w?'AI를 물리쳤습니다!':'패배했습니다...';
-      document.getElementById('final-story').innerText=ls||'';
-      if(w){dmgFx(innerWidth/2,innerHeight/2,'🏆','#ffd200');if(wtr)wtr.write('RGB:GOLD_PULSE\n');}
-      setTimeout(()=>{document.getElementById('ov').style.display='flex'},800);
+      if(w){flash('rgba(255,210,0,.3)');if(wtr)wtr.write('RGB:GOLD_PULSE\n');}
+      else{if(wtr)wtr.write('RGB:BLINK_RED\n');}
+      setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
     }
   }catch(e){console.error(e)}
 }
 
-function storyText(t){
-  document.getElementById('story-text').innerText=t;
-  document.getElementById('story-box').style.display='block';
-}
-
-function log(t,c=''){
-  const l=document.getElementById('lg'),d=document.createElement('div');
-  d.className='en '+(c||'');d.innerText=t;l.appendChild(d);
-  l.scrollTop=l.scrollHeight;
-}
-
+function showStory(t){document.getElementById('story-text').innerText=t;document.getElementById('story-box').style.display='block'}
+function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
 setInterval(()=>{if(gid&&!busy)ref()},3000);
 </script>
 </body>
