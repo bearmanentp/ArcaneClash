@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>🌌 Arcane Clash</title>
 <style>
+/* 기존 스타일 유지 */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
 h1{text-align:center;font-size:2.5em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -56,7 +57,6 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 @keyframes df{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}40%{transform:translate(-50%,-70%) scale(1.4)}100%{opacity:0;transform:translate(-50%,-140%) scale(1)}}
 .flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;animation:fl .4s forwards}
 @keyframes fl{0%{opacity:.35}100%{opacity:0}}
-.timer{position:absolute;top:-8px;right:-8px;background:#ff1744;color:white;font-size:0.75em;padding:2px 8px;border-radius:10px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -122,62 +122,37 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 const API = "https://script.google.com/macros/s/AKfycbzufMSNbj2LhmNstbUwnkpywbmjeHHJ8Hich7-qYytOD-gOD4CIVp4QXPg2p1BeiN-VLQ/exec";
 let gid=null,port=null,wtr=null,busy=false,ls="",curUid=null,curCard=null;
 let timerInterval = null;
-let timeLeft = 15;
+let timeLeft = 20;
 
 // ===== 효과음 =====
 function playSound(type) {
-  const audio = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = audio.createOscillator();
-  const gain = audio.createGain();
-  const filter = audio.createBiquadFilter();
-
-  if (type === 'attack') {
-    osc.type = 'sawtooth';
-    osc.frequency.value = 180;
-    gain.gain.value = 0.4;
-    filter.type = 'lowpass';
-    filter.frequency.value = 800;
-  } else if (type === 'heal') {
-    osc.type = 'sine';
-    osc.frequency.value = 880;
-    gain.gain.value = 0.3;
-  } else if (type === 'critical') {
-    osc.type = 'square';
-    osc.frequency.value = 220;
-    gain.gain.value = 0.5;
-  } else if (type === 'special') {
-    osc.type = 'sawtooth';
-    osc.frequency.value = 120;
-    gain.gain.value = 0.6;
-  } else if (type === 'victory') {
-    osc.type = 'sine';
-    osc.frequency.value = 660;
-    gain.gain.value = 0.4;
-  }
-
-  const compressor = audio.createDynamicsCompressor();
-  osc.connect(filter);
-  filter.connect(gain);
-  gain.connect(compressor);
-  compressor.connect(audio.destination);
-
-  osc.start();
-  setTimeout(() => {
-    gain.gain.linearRampToValueAtTime(0.001, audio.currentTime + 0.8);
-    setTimeout(() => osc.stop(), 900);
-  }, type === 'victory' ? 600 : 300);
+  try {
+    const audio = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    
+    if (type === 'attack') { osc.type = 'sawtooth'; osc.frequency.value = 180; gain.gain.value = 0.4; }
+    else if (type === 'heal') { osc.type = 'sine'; osc.frequency.value = 880; gain.gain.value = 0.3; }
+    else if (type === 'critical') { osc.type = 'square'; osc.frequency.value = 220; gain.gain.value = 0.5; }
+    else if (type === 'special') { osc.type = 'sawtooth'; osc.frequency.value = 120; gain.gain.value = 0.6; }
+    else if (type === 'victory') { osc.type = 'sine'; osc.frequency.value = 660; gain.gain.value = 0.4; }
+    
+    const compressor = audio.createDynamicsCompressor();
+    osc.connect(gain); gain.connect(compressor); compressor.connect(audio.destination);
+    osc.start();
+    setTimeout(() => { gain.gain.linearRampToValueAtTime(0.001, audio.currentTime + 0.8); setTimeout(() => osc.stop(), 900); }, 300);
+  } catch(e) {}
 }
 
 // ===== 타이머 =====
 function startTimer() {
   clearInterval(timerInterval);
-  timeLeft = 15;
-  document.getElementById('pt').innerHTML = `▶ YOUR TURN <span style="color:#ff6b6b;font-size:0.8em">(${timeLeft}s)</span>`;
+  timeLeft = 20;
+  updateTurnText();
   
   timerInterval = setInterval(() => {
     timeLeft--;
-    document.getElementById('pt').innerHTML = `▶ YOUR TURN <span style="color:#ff6b6b;font-size:0.8em">(${timeLeft}s)</span>`;
-    
+    updateTurnText();
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       autoEndTurn();
@@ -190,6 +165,10 @@ function stopTimer() {
   document.getElementById('pt').innerHTML = `▶ YOUR TURN`;
 }
 
+function updateTurnText() {
+  document.getElementById('pt').innerHTML = `▶ YOUR TURN <span style="color:#ff6b6b;font-size:0.75em">(${timeLeft}s)</span>`;
+}
+
 async function autoEndTurn() {
   if (!gid || busy) return;
   busy = true;
@@ -198,25 +177,19 @@ async function autoEndTurn() {
   document.getElementById('pc').classList.remove('on');
   document.getElementById('th').style.display = 'block';
   document.getElementById('th').innerHTML = '⏰ 시간 초과!';
+  document.getElementById('dc').style.display = 'none';
+  document.getElementById('pa').style.display = 'none';
 
   try {
     await api('aiTurn', {gameId: gid});
     await ref();
-  } catch(e) {
-    console.error(e);
-  }
+  } catch(e) { console.error(e); }
+  
   document.getElementById('th').style.display = 'none';
   busy = false;
 }
 
-// ===== 효과음 호출 =====
-function playEffect(type) {
-  try {
-    playSound(type);
-  } catch(e) {}
-}
-
-// ===== 기존 코드 (일부 수정) =====
+// ===== 기존 함수들 =====
 async function api(action,params){
   const qs=params?'&'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(String(v))).join('&'):'';
   const res=await fetch(API+'?action='+action+qs,{redirect:'follow'});
@@ -277,6 +250,7 @@ async function drawCard(uid){
       showStory(d.story);
       if(wtr)wtr.write('RGB:PURPLE\n');
       flash('rgba(102,126,234,.3)');
+      startTimer(); // ★ 타이머 시작
     } else {
       log('❌ '+(d.message||d.error||'오류'),'sy');
     }
@@ -294,7 +268,7 @@ async function cast(isSp){
   document.getElementById('pt').style.display='none';
   document.getElementById('pc').classList.remove('on');
   document.getElementById('th').style.display='block';
-  stopTimer();
+  stopTimer(); // ★ 타이머 정지
   busy=true;
 
   try{
@@ -304,13 +278,13 @@ async function cast(isSp){
       showStory(d.story);
       log(d.story, d.rgb=='YELLOW'?'cr':d.action=='Attack'?'at':d.action=='Heal'?'he':'de');
       
-      if(d.action=='Attack'){playEffect('attack');if(wtr)wtr.write('RGB:RED\n');}
-      else if(d.action=='Heal'){playEffect('heal');if(wtr)wtr.write('RGB:GREEN\n');}
+      if(d.action=='Attack'){playSound('attack');if(wtr)wtr.write('RGB:RED\n');}
+      else if(d.action=='Heal'){playSound('heal');if(wtr)wtr.write('RGB:GREEN\n');}
       else{if(wtr)wtr.write('RGB:CYAN\n');}
-      if(isSp){playEffect('special');if(wtr)wtr.write('RGB:YELLOW\n');}
+      if(isSp){playSound('special');if(wtr)wtr.write('RGB:YELLOW\n');}
 
       if(d.status=='FINISHED'){
-        playEffect('victory');
+        playSound('victory');
         endGame(d.playerHP>0);
         return;
       }
@@ -373,7 +347,6 @@ function endGame(win){
 
 function showStory(t){document.getElementById('story-text').innerText=t;document.getElementById('story-box').style.display='block'}
 function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
-
 setInterval(()=>{if(gid&&!busy)ref()},3000);
 </script>
 </body>
