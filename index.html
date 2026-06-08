@@ -119,7 +119,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 
 <script>
 const API = "https://script.google.com/macros/s/AKfycbzufMSNbj2LhmNstbUwnkpywbmjeHHJ8Hich7-qYytOD-gOD4CIVp4QXPg2p1BeiN-VLQ/exec";
-let gid=null,port=null,wtr=null,busy=false,ls="",curUid=null,curCard=null;
+let gid=null,port=null,wtr=null,busy=false,ls="",serialBuffer = "",curUid=null,curCard=null;
 let timerInterval = null;
 let timeLeft = 30;
 
@@ -235,16 +235,50 @@ async function api(action,params){
   return await res.json();
 }
 
+// RFID 인식 개선 (버퍼링 로직 추가)
 async function connectUSB(){
-  if(!("serial"in navigator))return alert("Chrome 사용!");
-  try{
-    port=await navigator.serial.requestPort();await port.open({baudRate:115200});
-    const e=new TextEncoderStream();e.readable.pipeTo(port.writable);wtr=e.writable.getWriter();
-    const d=new TextDecoderStream();port.readable.pipeTo(d.writable);const r=d.readable.getReader();
-    document.getElementById('ub').innerText='✅ 연결됨';document.getElementById('ub').disabled=true;
-    log('🔌 RFID 연결됨','sy');
-    (async()=>{while(true){const{value:v,done}=await r.read();if(done)break;if(v&&v.includes('CARD:')&&!busy){const uid=v.split('CARD:')[1].trim();if(document.getElementById('pt').style.display==='block')drawCard(uid);}}})();
-  }catch(e){alert(e.message)}
+  if(!("serial" in navigator)) return alert("Chrome 사용!");
+  try {
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+    const encoder = new TextEncoderStream();
+    encoder.readable.pipeTo(port.writable);
+    wtr = encoder.writable.getWriter();
+    
+    const decoder = new TextDecoderStream();
+    port.readable.pipeTo(decoder.writable);
+    const reader = decoder.readable.getReader();
+
+    document.getElementById('ub').innerText='✅ 연결됨';
+    document.getElementById('ub').disabled=true;
+    log('🔌 RFID 리더기 연결 성공', 'sy');
+
+    // 시리얼 읽기 루프 개선
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      if (value) {
+        serialBuffer += value; // 데이터를 버퍼에 추가
+        if (serialBuffer.includes('\n')) { // 줄바꿈이 있을 때만 처리
+          const lines = serialBuffer.split('\n');
+          serialBuffer = lines.pop(); // 마지막 미완성 줄은 버퍼에 남김
+          
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (trimmed.includes('CARD:') && !busy) {
+              const uid = trimmed.split('CARD:')[1].trim();
+              // 인식 즉시 UI 피드백 (느린 느낌 제거)
+              document.getElementById('th').style.display = 'block';
+              document.getElementById('th').innerHTML = '🔍 카드 감지됨: ' + uid;
+              if (document.getElementById('pt').style.display === 'block') {
+                drawCard(uid);
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch(e) { alert(e.message); }
 }
 
 async function startGame(){
@@ -273,107 +307,138 @@ async function startGame(){
   }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
 
-async function drawCard(uid){
-  if(busy||!gid)return;busy=true;
-  try{
-    const d=await api('drawCard',{gameId:gid,uid:uid});
-    console.log('drawCard 응답:', d);
-    if(d.success){
-      curUid=d.uid||uid;
-      curCard=d.card;
-      const tm={Attack:'⚔️ 공격',Heal:'💚 회복',Defense:'🛡️ 방어'};
-      const cc={Attack:'#ff1744',Heal:'#00c853',Defense:'#00bcd4'};
-      document.getElementById('cn').innerText='✨ '+d.card.name;
-      document.getElementById('cpw').innerText='⚡ '+d.card.power;
-      const ct=document.getElementById('ct');
-      ct.innerText=tm[d.card.type];ct.style.color=cc[d.card.type];
-      document.getElementById('dc').style.display='block';
-      document.getElementById('pa').style.display='block';
-      document.getElementById('pi').value='';document.getElementById('pi').focus();
-      const sp=document.getElementById('ps').innerText;
-      document.getElementById('sb').style.display=sp.includes('READY')?'inline-block':'none';
-      log('🃏 드로우: '+d.card.name+' ('+tm[d.card.type]+')','sy');
+// 카드 드로우 함수 (중복 호출 방지 강화)
+async function drawCard(uid) {
+  if (busy || !gid) return;
+  busy = true;
+  
+  try {
+    const d = await api('drawCard', { gameId: gid, uid: uid });
+    if (d.success) {
+      curUid = d.uid || uid;
+      curCard = d.card;
+      const tm = { Attack: '⚔️ 공격', Heal: '💚 회복', Defense: '🛡️ 방어' };
+      const cc = { Attack: '#ff1744', Heal: '#00c853', Defense: '#00bcd4' };
+      
+      document.getElementById('cn').innerText = '✨ ' + d.card.name;
+      document.getElementById('cpw').innerText = '⚡ ' + d.card.power;
+      const ct = document.getElementById('ct');
+      ct.innerText = tm[d.card.type];
+      ct.style.color = cc[d.card.type];
+      
+      document.getElementById('dc').style.display = 'block';
+      document.getElementById('pa').style.display = 'block';
+      document.getElementById('th').style.display = 'none'; // 로딩 제거
+      
+      const sp = document.getElementById('ps').innerText;
+      document.getElementById('sb').style.display = sp.includes('READY') ? 'inline-block' : 'none';
+      
+      // 로그 중복 방지를 위해 ls 업데이트
+      ls = d.story;
       showStory(d.story);
-      if(wtr)wtr.write('RGB:PURPLE\n');
+      log('🃏 드로우: ' + d.card.name, 'sy');
+      
+      if (wtr) wtr.write('RGB:PURPLE\n');
       flash('rgba(102,126,234,.3)');
-    } else {
-      log('❌ '+(d.message||d.error||'오류'),'sy');
     }
-  }catch(e){console.error(e)}
-  busy=false;
+  } catch (e) { console.error(e); }
+  busy = false;
 }
 
-async function cast(isSp){
-  const p=document.getElementById('pi').value.trim();
-  if(!p)return alert('주문 입력!');
-  if(!curUid)return alert('카드를 먼저 뽑으세요!');
+// cast 함수 내에서도 ls 업데이트 필수
+async function cast(isSp) {
+  const p = document.getElementById('pi').value.trim();
+  if (!p) return alert('주문 입력!');
+  if (!curUid) return alert('카드를 먼저 뽑으세요!');
 
-  document.getElementById('dc').style.display='none';
-  document.getElementById('pa').style.display='none';
-  document.getElementById('pt').style.display='none';
-  document.getElementById('pc').classList.remove('on');
-  document.getElementById('th').style.display='block';
+  // 1. UI 잠금 및 초기화
+  busy = true; 
   stopTimer();
-  busy=true;
+  document.getElementById('dc').style.display = 'none';
+  document.getElementById('pa').style.display = 'none';
+  document.getElementById('pt').style.display = 'none';
+  document.getElementById('pc').classList.remove('on');
+  
+  // 로딩 상태 표시
+  document.getElementById('th').style.display = 'block';
+  document.getElementById('th').innerHTML = '🪄 마법을 시전 중...';
 
-  try{
-    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid});
-    console.log('playerTurn 응답:', d);
-    if(d.success){
+  try {
+    // 2. 플레이어 공격 API 호출
+    const d = await api('playerTurn', {gameId: gid, prompt: p, isSpecial: String(isSp), uid: curUid});
+    console.log('PlayerTurn 결과:', d);
+
+    if (d.success) {
+      // ⭐ 핵심: 로그 중복 방지를 위해 서버에서 온 스토리를 즉시 ls에 저장
+      ls = d.story; 
+      
       updateHP(d.playerHP, d.aiHP);
       showStory(d.story);
-      log(d.story, d.rgb=='YELLOW'?'cr':d.action=='Attack'?'at':d.action=='Heal'?'he':'de');
+      log(d.story, d.rgb == 'YELLOW' ? 'cr' : d.action == 'Attack' ? 'at' : d.action == 'Heal' ? 'he' : 'de');
       
-      if(d.action=='Attack'){playSound('attack');if(wtr)wtr.write('RGB:RED\n');}
-      else if(d.action=='Heal'){playSound('heal');if(wtr)wtr.write('RGB:GREEN\n');}
-      else{if(wtr)wtr.write('RGB:CYAN\n');}
-      if(isSp){playSound('special');if(wtr)wtr.write('RGB:YELLOW\n');}
+      // 시각/음향 효과
+      if (d.action == 'Attack') { playSound('attack'); if (wtr) wtr.write('RGB:RED\n'); }
+      else if (d.action == 'Heal') { playSound('heal'); if (wtr) wtr.write('RGB:GREEN\n'); }
+      if (isSp) { playSound('special'); if (wtr) wtr.write('RGB:YELLOW\n'); }
 
-      if(d.status=='FINISHED'){
-        playSound('victory');
-        endGame(d.playerHP>0);
+      // 게임 종료 체크
+      if (d.status == 'FINISHED') {
+        endGame(d.playerHP > 0);
         return;
       }
     } else {
-      alert(d.message || d.error);
-      document.getElementById('th').style.display='none';
-      busy=false;
-      startTimer();
-      return;
+      throw new Error(d.message || d.error);
     }
 
+    // 3. AI 턴으로 전환 준비 (1.5초 대기)
+    await new Promise(r => setTimeout(r, 1500));
+    
     document.getElementById('ac').classList.add('on');
-    document.getElementById('th').innerHTML='🤖 Guardian의 반격!';
-    await new Promise(r=>setTimeout(r,2000));
+    document.getElementById('th').innerHTML = '🤖 Guardian의 반격 준비 중...';
+    
+    // 4. AI 공격 API 호출
+    const ai = await api('aiTurn', {gameId: gid});
+    console.log('AITurn 결과:', ai);
 
-    const ai=await api('aiTurn',{gameId:gid});
-    console.log('aiTurn 응답:', ai);
-    if(ai&&ai.success){
+    if (ai && ai.success) {
+      // ⭐ AI의 스토리도 출력 직후 ls에 저장하여 ref()와 충돌 방지
+      ls = ai.story; 
+      
       updateHP(ai.playerHP, ai.aiHP);
-      showStory('🤖 '+ai.story);
-      log('🤖 '+ai.story,'at');
-      if(wtr)wtr.write('RGB:'+ai.rgb+'\n');
-      if(ai.status=='FINISHED'){
-        endGame(ai.playerHP>0);
+      showStory('🤖 ' + ai.story);
+      log('🤖 ' + ai.story, 'at');
+      if (wtr) wtr.write('RGB:' + ai.rgb + '\n');
+      
+      if (ai.status == 'FINISHED') {
+        endGame(ai.playerHP > 0);
         return;
       }
+    } else {
+      log('⚠️ AI가 혼란에 빠져 공격을 포기했습니다.', 'sy');
     }
 
-    document.getElementById('th').style.display='none';
-    document.getElementById('th').innerHTML='🤖 AI가 마법을 준비 중...';
+    // 5. 다시 플레이어 턴으로 복구
+    await new Promise(r => setTimeout(r, 1200)); // 결과 읽을 시간 확보
+    
+    document.getElementById('th').style.display = 'none';
     document.getElementById('ac').classList.remove('on');
-    document.getElementById('pt').style.display='block';
+    document.getElementById('pt').style.display = 'block';
     document.getElementById('pc').classList.add('on');
-    document.getElementById('pi').value='';
-    curUid=null;curCard=null;
-    startTimer();
+    document.getElementById('pi').value = '';
+    
+    // 카드 정보 및 상태 초기화
+    curUid = null;
+    curCard = null;
+    busy = false; // 이제 새로운 카드 인식을 허용
+    startTimer(); // 30초 타이머 시작
 
-  }catch(e){
-    console.error(e);
-    document.getElementById('th').style.display='none';
+  } catch (e) {
+    console.error('전투 중 오류 발생:', e);
+    alert('오류가 발생했습니다: ' + e.message);
+    document.getElementById('th').style.display = 'none';
+    busy = false;
     startTimer();
   }
-  busy=false;
 }
 
 function updateHP(p,a){
@@ -395,35 +460,41 @@ function endGame(win){
 function showStory(t){document.getElementById('story-text').innerText=t;document.getElementById('story-box').style.display='block'}
 function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
 
-async function ref(){
-  if(!gid) return;
-  try{
-    const d=await api('getState',{gameId:gid});
-    if(!d.success||!d.game)return;
-    const g=d.game;
+// 로그 중복 방지가 적용된 ref 함수
+async function ref() {
+  if (!gid || busy) return; // 사용자가 조작 중일 때는 동기화 건너뜀
+  try {
+    const d = await api('getState', { gameId: gid });
+    if (!d.success || !d.game) return;
+    const g = d.game;
+    
     updateHP(g.playerHP, g.aiHP);
-    document.getElementById('tc').innerText=`턴 ${g.turnNum}`;
-    const sp=document.getElementById('ps');
-    if(g.playerSpecial==='READY'){sp.innerText='⚡ READY';sp.className='badge br'}
-    else{sp.innerText='⚡ USED';sp.className='badge bu'}
-    if(g.lastStory&&g.lastStory!==ls&&g.turnNum>0){
-      ls=g.lastStory;
-      let c='';
-      if(g.lastRGB==='RED'||g.lastRGB==='RAINBOW')c='at';
-      else if(g.lastRGB==='GREEN')c='he';
-      else if(g.lastRGB==='CYAN')c='de';
-      else if(g.lastRGB==='YELLOW'||g.lastRGB==='GOLD_PULSE')c='cr';
-      log(g.lastStory,c);
+    document.getElementById('tc').innerText = `턴 ${g.turnNum}`;
+    
+    const sp = document.getElementById('ps');
+    if (g.playerSpecial === 'READY') {
+      sp.innerText = '⚡ READY'; sp.className = 'badge br';
+    } else {
+      sp.innerText = '⚡ USED'; sp.className = 'badge bu';
     }
-    if(g.status==='FINISHED'){
-      const w=g.playerHP>0;
-      document.getElementById('wt').innerText=w?'🏆 VICTORY!':'💀 DEFEAT...';
-      document.getElementById('ws').innerText=w?'AI를 물리쳤습니다!':'패배했습니다...';
-      if(w){if(wtr)wtr.write('RGB:GOLD_PULSE\n');flash('rgba(255,210,0,.3)');}
-      else{if(wtr)wtr.write('RGB:BLINK_RED\n');}
-      setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
+
+    // ⭐ 핵심: ls와 비교하여 새로운 스토리일 때만 로그 출력
+    if (g.lastStory && g.lastStory.trim() !== ls.trim()) {
+      ls = g.lastStory; // 출력 직전 업데이트하여 중복 방지
+      let c = '';
+      if (g.lastRGB === 'RED') c = 'at';
+      else if (g.lastRGB === 'GREEN') c = 'he';
+      else if (g.lastRGB === 'CYAN') c = 'de';
+      else if (g.lastRGB === 'YELLOW') c = 'cr';
+      
+      log(g.lastStory, c);
+      showStory(g.lastStory);
     }
-  }catch(e){console.error(e)}
+
+    if (g.status === 'FINISHED') {
+      endGame(g.playerHP > 0);
+    }
+  } catch (e) { console.error(e); }
 }
 
 setInterval(()=>{if(gid&&!busy)ref()},3000);
