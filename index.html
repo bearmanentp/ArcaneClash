@@ -167,32 +167,65 @@ function updateTurnText() {
 }
 
 async function autoEndTurn() {
-  if (!gid) return;
+  if (!gid || busy) return; // 이미 처리 중이면 중단
   
-  busy = false;
-  stopTimer();
+  busy = true; // 다른 입력 방지
+  stopTimer(); // 타이머 중지
+  
+  // 플레이어 UI 비활성화
   document.getElementById('pt').style.display = 'none';
   document.getElementById('pc').classList.remove('on');
-  document.getElementById('th').style.display = 'block';
-  document.getElementById('th').innerHTML = '⏰ 시간 초과!';
   document.getElementById('dc').style.display = 'none';
   document.getElementById('pa').style.display = 'none';
+  
+  // 알림 표시
+  document.getElementById('th').style.display = 'block';
+  document.getElementById('th').innerHTML = '⏰ 시간 초과! Guardian의 공격!';
 
   const playerName = document.getElementById('pn').innerText;
-  const timeoutStory = "⏰ 시간이 초과되어 " + playerName + "은(는) 공격을 하지 못했다.";
+  const timeoutStory = "⏰ 시간이 초과되어 " + playerName + "은(는) 아무것도 하지 못했습니다.";
   showStory(timeoutStory);
   log(timeoutStory, 'sy');
 
+  // AI 턴 시각 효과
   document.getElementById('ac').classList.add('on');
   await new Promise(r => setTimeout(r, 1500));
 
   try {
-    await api('aiTurn', {gameId: gid});
-    await ref();
-  } catch(e) { console.error(e); }
-  
-  document.getElementById('th').style.display = 'none';
-  document.getElementById('ac').classList.remove('on');
+    // 1. AI 턴 실행
+    const ai = await api('aiTurn', {gameId: gid});
+    console.log('시간초과 후 AI 턴 응답:', ai);
+    
+    if (ai && ai.success) {
+      updateHP(ai.playerHP, ai.aiHP);
+      showStory('🤖 ' + ai.story);
+      log('🤖 ' + ai.story, 'at');
+      if (wtr) wtr.write('RGB:' + ai.rgb + '\n');
+      
+      // 게임 종료 체크
+      if (ai.status == 'FINISHED') {
+        endGame(ai.playerHP > 0);
+        return;
+      }
+    }
+    
+    // 2. 다시 플레이어 턴으로 복구 (이 부분이 누락되었던 핵심입니다)
+    document.getElementById('th').style.display = 'none';
+    document.getElementById('ac').classList.remove('on');
+    document.getElementById('pt').style.display = 'block';
+    document.getElementById('pc').classList.add('on');
+    
+    // 변수 초기화 및 타이머 재시작
+    curUid = null;
+    curCard = null;
+    busy = false; // 이제 새로운 카드 입력을 받을 수 있음
+    startTimer(); // 다음 턴 타이머 시작
+
+  } catch (e) {
+    console.error("시간 초과 처리 중 오류:", e);
+    busy = false;
+    startTimer();
+  }
 }
 
 // ===== 기존 함수 =====
@@ -222,6 +255,7 @@ async function startGame(){
     console.log('startGame 응답:', d);
     if(d.success){
       gid=d.gameId;
+      busy = false; // 게임 시작 시 조작 가능하게 초기화
       console.log('게임 ID 설정:', gid);
       document.getElementById('lobby').style.display='none';
       document.getElementById('ar').style.display='grid';
