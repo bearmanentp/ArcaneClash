@@ -6,110 +6,120 @@
 <title>🌌 Arcane Clash</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
-h1{text-align:center;font-size:2.6em;padding:20px 0 4px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sub{text-align:center;color:#666;margin-bottom:15px;font-size:.88em}
-.box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;margin:12px auto;max-width:760px}
-input,textarea{width:100%;padding:12px;font-size:15px;border-radius:10px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;margin:6px 0;resize:none;outline:none}
+body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
+h1{text-align:center;font-size:2.5em;padding:18px 0 3px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{text-align:center;color:#555;margin-bottom:12px;font-size:.85em}
+.box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;margin:10px auto;max-width:740px}
+input,textarea{width:100%;padding:11px;font-size:14px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;margin:5px 0;resize:none;outline:none}
 input:focus,textarea:focus{border-color:#667eea}
-button{padding:11px 22px;font-size:14px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px;transition:all .2s}
-button:hover{transform:translateY(-2px)}
-button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+button{padding:11px 20px;font-size:14px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px;transition:all .2s}
+button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-allowed;transform:none}
 .b1{background:#222;color:#fff}.b2{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.ba{background:linear-gradient(135deg,#e53935,#ff1744);color:#fff;width:100%}
-.bh{background:linear-gradient(135deg,#00c853,#69f0ae);color:#111;width:100%}
-.bd{background:linear-gradient(135deg,#00acc1,#29b6f6);color:#fff;width:100%}
-.bs{background:linear-gradient(135deg,#ffd200,#ffab00);color:#222;width:100%;animation:gl 2s infinite}
-@keyframes gl{0%,100%{box-shadow:0 0 5px #ffd200}50%{box-shadow:0 0 20px #ffd200}}
-.arena{display:none;grid-template-columns:1fr 70px 1fr;gap:14px;align-items:center}
-.pc{background:rgba(255,255,255,.05);border-radius:14px;padding:16px;text-align:center;border:2px solid rgba(255,255,255,.08);transition:all .4s}
+.ba{background:linear-gradient(135deg,#e53935,#ff1744);color:#fff;width:100%;padding:14px;font-size:16px}
+.bs{background:linear-gradient(135deg,#ffd200,#ffab00);color:#222;width:100%;padding:14px;font-size:16px;animation:gl 2s infinite}
+@keyframes gl{0%,100%{box-shadow:0 0 5px #ffd200}50%{box-shadow:0 0 25px #ffd200}}
+.arena{display:none;grid-template-columns:1fr 60px 1fr;gap:12px;align-items:center}
+.pc{background:rgba(255,255,255,.05);border-radius:14px;padding:15px;text-align:center;border:2px solid rgba(255,255,255,.08);transition:all .3s}
 .pc.on{border-color:#ffd200;box-shadow:0 0 30px rgba(255,210,0,.2)}
-.hpb{height:26px;background:rgba(0,0,0,.5);border-radius:8px;overflow:hidden;margin:8px 0}
-.hp{height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.82em;transition:width .6s;border-radius:8px;min-width:22px}
+.hpb{height:28px;background:rgba(0,0,0,.5);border-radius:8px;overflow:hidden;margin:8px 0;position:relative}
+.hp{height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85em;transition:width .6s;border-radius:8px;min-width:24px;position:relative;z-index:1}
 .hp1{background:linear-gradient(90deg,#00c853,#69f0ae)}.hp2{background:linear-gradient(90deg,#e53935,#ff1744)}
-.hpl{animation:bl .5s infinite}@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
-.vs{font-size:2em;font-weight:900;color:#ffd200}
+.hpl{animation:blink .5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hp-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;font-size:.85em;font-weight:bold;text-shadow:0 0 4px rgba(0,0,0,.8);pointer-events:none}
+.vs{font-size:1.8em;font-weight:900;color:#ffd200}
 .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7em;font-weight:bold;margin-top:4px}
 .br{background:#ffd200;color:#222}.bu{background:#333;color:#666}
 .tm{color:#ffd200;font-weight:bold;margin-top:6px;display:none;animation:bn .7s infinite}
 @keyframes bn{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.dc{display:none;background:linear-gradient(135deg,rgba(102,126,234,.12),rgba(118,75,162,.12));border:2px solid #667eea;border-radius:14px;padding:18px;margin:12px 0;text-align:center;animation:ci .4s}
-@keyframes ci{from{transform:scale(.92) rotateY(90deg);opacity:0}to{transform:scale(1) rotateY(0);opacity:1}}
-.cn{font-size:1.4em;font-weight:bold;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.cp{font-size:2.2em;font-weight:900;color:#ffd200;margin:4px 0;text-shadow:0 0 15px rgba(255,210,0,.5)}
-.pa{display:none;margin-top:10px}
-#lg{max-height:300px;overflow-y:auto;padding:10px;background:rgba(0,0,0,.3);border-radius:10px}
-.en{padding:10px 12px;margin:5px 0;border-radius:8px;background:rgba(255,255,255,.05);border-left:4px solid #667eea;animation:sl .3s;font-size:.84em;line-height:1.5}
-.en.at{border-left-color:#ff1744;background:rgba(255,23,68,.06)}
-.en.he{border-left-color:#00c853;background:rgba(0,200,83,.06)}
-.en.de{border-left-color:#00bcd4;background:rgba(0,188,212,.06)}
+.card-show{display:none;background:linear-gradient(135deg,rgba(102,126,234,.12),rgba(118,75,162,.12));border:2px solid #667eea;border-radius:14px;padding:16px;margin:10px 0;text-align:center;animation:ci .4s}
+@keyframes ci{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.cn{font-size:1.3em;font-weight:bold;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cp{font-size:2em;font-weight:900;color:#ffd200;margin:2px 0;text-shadow:0 0 12px rgba(255,210,0,.4)}
+.pa{display:none;margin-top:8px}
+#story-box{display:none;margin:10px auto;max-width:740px;padding:14px 18px;background:rgba(255,210,0,.06);border:1px solid rgba(255,210,0,.2);border-radius:12px;animation:si .5s}
+@keyframes si{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#story-text{font-size:1em;line-height:1.8;color:#ffd200;font-style:italic;white-space:pre-line}
+#lg{max-height:280px;overflow-y:auto;padding:8px;background:rgba(0,0,0,.3);border-radius:10px}
+.en{padding:10px 12px;margin:5px 0;border-radius:8px;background:rgba(255,255,255,.05);border-left:4px solid #667eea;font-size:.82em;line-height:1.5;animation:sl .3s}
+.en.at{border-left-color:#ff1744;background:rgba(255,23,68,.05)}
+.en.he{border-left-color:#00c853;background:rgba(0,200,83,.05)}
+.en.de{border-left-color:#00bcd4;background:rgba(0,188,212,.05)}
 .en.cr{border-left-color:#ffd200;background:rgba(255,210,0,.08);font-weight:bold}
-.en.sy{border-left-color:#444;color:#777;font-size:.78em}
-@keyframes sl{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
-#story-box{display:none;margin:12px auto;max-width:760px;padding:16px 20px;background:rgba(255,210,0,.06);border:1px solid rgba(255,210,0,.2);border-radius:14px;text-align:center;animation:si .5s}
-@keyframes si{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-#story-text{font-size:1em;line-height:1.7;color:#ffd200;font-style:italic}
-.th{display:none;text-align:center;padding:18px;font-size:1.2em;color:#ff6b6b}
+.en.sy{border-left-color:#444;color:#777;font-size:.76em}
+@keyframes sl{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.th{display:none;text-align:center;padding:16px;font-size:1.15em;color:#ff6b6b}
 #ov{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.96);z-index:1000;flex-direction:column;justify-content:center;align-items:center}
-.wt{font-size:3.8em;font-weight:900;margin-bottom:12px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:wp 1.5s infinite}
-@keyframes wp{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.wt{font-size:3.5em;font-weight:900;margin-bottom:12px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 #cv{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
-.dmg{position:fixed;font-size:2.8em;font-weight:900;pointer-events:none;z-index:100;animation:df 1.2s forwards;text-shadow:0 0 20px currentColor}
-@keyframes df{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}30%{transform:translate(-50%,-70%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-150%) scale(1)}}
+.dmg{position:fixed;font-size:2.5em;font-weight:900;pointer-events:none;z-index:100;text-shadow:0 0 20px currentColor;animation:df 1.2s forwards}
+@keyframes df{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}40%{transform:translate(-50%,-70%) scale(1.4)}100%{opacity:0;transform:translate(-50%,-140%) scale(1)}}
 .flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;animation:fl .4s forwards}
-@keyframes fl{0%{opacity:.4}100%{opacity:0}}
+@keyframes fl{0%{opacity:.35}100%{opacity:0}}
 </style>
 </head>
 <body>
 <canvas id="cv"></canvas>
 <h1>🌌 Arcane Clash</h1>
-<p class="sub">카드마다 랜덤 능력! AI가 만드는 전투 서사!</p>
+<p class="sub">카드마다 랜덤 능력! 네가 쓴 주문을 AI가 상세하게 발전시킨다!</p>
 
 <div class="box" id="lobby">
 <input type="text" id="nm" placeholder="닉네임 입력" maxlength="12">
 <div style="display:flex;gap:8px;margin-top:4px">
-<button class="b1" onclick="connectUSB()" id="ub">🔌 USB</button>
+<button class="b1" onclick="connectUSB()" id="ub">🔌 USB 연결</button>
 <button class="b2" onclick="startGame()">⚔️ 게임 시작</button>
 </div>
-<div id="ms" style="margin-top:8px;font-weight:bold;color:#666"></div>
+<div id="ms" style="margin-top:8px;font-weight:bold;color:#555"></div>
 </div>
 
 <div class="box arena" id="ar">
 <div class="pc" id="pc">
-<h2 id="pn" style="font-size:1.1em">Player</h2>
-<div class="hpb"><div class="hp hp1" id="ph" style="width:100%">100</div></div>
+<h2 id="pn" style="font-size:1.05em">Player</h2>
+<div class="hpb">
+<div class="hp hp1" id="ph" style="width:100%"></div>
+<span class="hp-label" id="phl">100</span>
+</div>
 <div id="ps" class="badge br">⚡ READY</div>
 <div class="tm" id="pt">▶ YOUR TURN</div>
 </div>
 <div style="text-align:center"><span class="vs">⚔️</span><br><span style="color:#555;font-size:.7em" id="tc">0/25</span></div>
 <div class="pc" id="ac">
-<h2 style="font-size:1.1em">🤖 Guardian</h2>
-<div class="hpb"><div class="hp hp2" id="ah" style="width:100%">100</div></div>
+<h2 style="font-size:1.05em">🤖 Guardian</h2>
+<div class="hpb">
+<div class="hp hp2" id="ah" style="width:100%"></div>
+<span class="hp-label" id="ahl">100</span>
+</div>
 </div>
 </div>
 
 <div class="th" id="th">🤖 AI가 마법을 준비 중...</div>
 
 <div class="box" id="da" style="display:none">
-<h2 style="margin-bottom:4px">🃏 카드를 리더기에 대주세요!</h2>
-<p style="color:#555;font-size:.78em">카드마다 랜덤 능력이 부여됩니다</p>
-<div class="dc" id="dc">
+<h2 style="margin-bottom:3px">🃏 카드를 리더기에 대주세요!</h2>
+<p style="color:#555;font-size:.76em">카드마다 랜덤 능력이 부여됩니다</p>
+<div class="card-show" id="dc">
 <div class="cn" id="cn"></div>
 <div class="cp" id="cpw"></div>
-<div id="ct" style="font-weight:bold;margin:4px 0"></div>
+<div id="ct" style="font-weight:bold;margin:3px 0"></div>
 </div>
 <div class="pa" id="pa">
-<textarea id="pi" rows="2" placeholder="✨ 시전할 주문을 입력하세요!"></textarea>
+<textarea id="pi" rows="2" placeholder="✨ 시전할 주문을 자유롭게 입력하세요!&#10;예: 불꽃 검으로 적의 심장을 꿰뚫어라!"></textarea>
 <div style="display:flex;gap:6px;margin-top:6px">
-<button class="ba" onclick="cast(false)">⚔️ 시전</button>
-<button class="bs" onclick="cast(true)" id="sb" style="display:none">⚡ 스페셜!</button>
+<button class="ba" onclick="cast(false)">⚔️ 시전!</button>
+<button class="bs" onclick="cast(true)" id="sb" style="display:none">⚡ 스페셜! (2배)</button>
 </div>
 </div>
 </div>
 
-<div id="story-box"><div id="story-text"></div></div>
+<div id="story-box">
+<h4 style="margin-bottom:6px;color:#ffd200;font-size:.85em">📖 AI 전투 서사</h4>
+<div id="story-text">카드를 대고 주문을 입력하면 AI가 상세한 전투 이야기를 만들어줍니다...</div>
+</div>
 
-<div class="box" id="lb" style="display:none"><h3 style="margin-bottom:6px;font-size:.95em">📜 전투 로그</h3><div id="lg"></div></div>
+<div class="box" id="lb" style="display:none">
+<h3 style="margin-bottom:6px;font-size:.9em">📜 로그</h3>
+<div id="lg"></div>
+</div>
 
 <div id="ov">
 <div class="wt" id="wt"></div>
@@ -118,28 +128,17 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none}
 </div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbx63YuO6WRo--m3BKTy2DVv8Re5BdW__E_IqB11KKQqhVskH5GM86J_4muodEyoBUzy/exec";
-let gid=null,port=null,wtr=null,busy=false,ls="",curCard=null;
+const API="https://script.google.com/macros/s/AKfycbyilHb6lKaf-TV6GRMP2TgRhl4jfpbP5a7NeEQVoxC9bsWZlDErELTAT6l7JFE6JBNaug/exec";
+let gid=null,port=null,wtr=null,busy=false,ls="",curUid="",curCard=null;
 
 // 파티클
 const cv=document.getElementById('cv'),cx=cv.getContext('2d');
 function rsz(){cv.width=innerWidth;cv.height=innerHeight}rsz();addEventListener('resize',rsz);
-const pts=[];for(let i=0;i<55;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,s:Math.random()*2+.5,o:Math.random()*.3+.08,c:['255,210,0','102,126,234','118,75,162'][i%3]});
+const pts=[];for(let i=0;i<50;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,s:Math.random()*2+.5,o:Math.random()*.3+.08,c:['255,210,0','102,126,234','118,75,162'][i%3]});
 !function a(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.s,0,6.28);cx.fillStyle='rgba('+p.c+','+p.o+')';cx.fill()});requestAnimationFrame(a)}();
 
-// 화면 플래시
-function flash(color){
-  const f=document.createElement('div');f.className='flash';f.style.background=color;
-  document.body.appendChild(f);setTimeout(()=>{try{document.body.removeChild(f)}catch(e){}},500);
-}
-
-// 데미지 숫자
-function dmgFx(x,y,val,color){
-  const d=document.createElement('div');d.className='dmg';
-  d.style.cssText='left:'+x+'px;top:'+y+'px;color:'+color;
-  d.innerText=val;document.body.appendChild(d);
-  setTimeout(()=>{try{document.body.removeChild(d)}catch(e){}},1400);
-}
+function flash(c){const f=document.createElement('div');f.className='flash';f.style.background=c;document.body.appendChild(f);setTimeout(()=>{try{document.body.removeChild(f)}catch(e){}},500)}
+function dmgFx(x,y,v,c){const d=document.createElement('div');d.className='dmg';d.style.cssText='left:'+x+'px;top:'+y+'px;color:'+c;d.innerText=v;document.body.appendChild(d);setTimeout(()=>{try{document.body.removeChild(d)}catch(e){}},1400)}
 
 async function api(action,params){
   const qs=params?'&'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(String(v))).join('&'):'';
@@ -153,10 +152,15 @@ async function connectUSB(){
     port=await navigator.serial.requestPort();await port.open({baudRate:115200});
     const e=new TextEncoderStream();e.readable.pipeTo(port.writable);wtr=e.writable.getWriter();
     const d=new TextDecoderStream();port.readable.pipeTo(d.writable);const r=d.readable.getReader();
-    document.getElementById('ub').innerText='✅';document.getElementById('ub').disabled=true;
-    log('🔌 RFID 연결됨','sy');
-    (async()=>{while(true){const{value:v,done}=await r.read();if(done)break;if(v&&v.includes('CARD:')&&!busy){const uid=v.split('CARD:')[1].trim();if(document.getElementById('pt').style.display==='block')drawCard(uid);}}})();
-  }catch(e){alert(e.message)}
+    document.getElementById('ub').innerText='✅ 연결됨';document.getElementById('ub').disabled=true;
+    log('🔌 RFID 리더기 연결됨','sy');
+    (async()=>{while(true){const{value:v,done}=await r.read();if(done)break;
+      if(v&&v.includes('CARD:')&&!busy){
+        const uid=v.split('CARD:')[1].trim();
+        if(document.getElementById('pt').style.display==='block')drawCard(uid);
+      }
+    }})();
+  }catch(e){alert("연결 실패: "+e.message)}
 }
 
 async function startGame(){
@@ -173,8 +177,8 @@ async function startGame(){
       document.getElementById('pn').innerText=n;
       document.getElementById('pt').style.display='block';
       document.getElementById('pc').classList.add('on');
-      log('🌌 Arcane Clash 시작!','sy');
-      showStory('🌌 운명의 대결이 펼쳐진다... 카드를 대라!');
+      log('🌌 Arcane Clash 시작! HP: 100 vs 100','sy');
+      showStory('🌌 운명의 대결이 펼쳐진다...\n카드를 리더기에 대서 뽑고, 주문을 입력해라!');
     }
   }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
@@ -184,21 +188,20 @@ async function drawCard(uid){
   try{
     const d=await api('drawCard',{gameId:gid,uid:uid});
     if(d.success){
-      curCard=d.card;
+      curCard=d.card;curUid=d.uid||uid;
       const tm={Attack:'⚔️ 공격',Heal:'💚 회복',Defense:'🛡️ 방어'};
       const cc={Attack:'#ff1744',Heal:'#00c853',Defense:'#00bcd4'};
       document.getElementById('cn').innerText='✨ '+d.card.name;
       document.getElementById('cpw').innerText='⚡ '+d.card.power;
       const ct=document.getElementById('ct');
-      ct.innerText=tm[d.card.type]||d.card.type;
-      ct.style.color=cc[d.card.type]||'#fff';
+      ct.innerText=tm[d.card.type];ct.style.color=cc[d.card.type];
       document.getElementById('dc').style.display='block';
       document.getElementById('pa').style.display='block';
       document.getElementById('pi').value='';document.getElementById('pi').focus();
       const sp=document.getElementById('ps').innerText;
       document.getElementById('sb').style.display=sp.includes('READY')?'inline-block':'none';
-      log('🃏 '+d.card.name+' ('+tm[d.card.type]+' ⚡'+d.card.power+')','sy');
-      showStory(d.story||d.card.name+' 카드 드로우!');
+      log('🃏 드로우: '+d.card.name+' ('+tm[d.card.type]+' ⚡'+d.card.power+')','sy');
+      showStory(d.story);
       if(wtr)wtr.write('RGB:PURPLE\n');
       flash('rgba(102,126,234,.3)');
     } else {
@@ -211,37 +214,56 @@ async function drawCard(uid){
 
 async function cast(isSp){
   const p=document.getElementById('pi').value.trim();
-  if(!p)return alert('주문 입력!');
+  if(!p)return alert('주문을 입력하세요!');
+  if(!curCard)return alert('카드를 먼저 뽑으세요!');
+
   document.getElementById('dc').style.display='none';
   document.getElementById('pa').style.display='none';
   document.getElementById('pt').style.display='none';
   document.getElementById('pc').classList.remove('on');
   document.getElementById('th').style.display='block';
   busy=true;
+
   try{
-    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:isSp,uid:''});
+    // 플레이어 턴
+    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid});
+
+    // HP 즉시 업데이트 ( getState 전에 미리 업데이트)
     await ref();
-    if(d.story)showStory(d.story);
+
+    // AI 스토리 표시
+    if(d.story) showStory(d.story);
+
+    // 화면 효과
     if(d.action==='ATTACK'){
       dmgFx(innerWidth*.7,innerHeight*.35,'-'+d.damage,'#ff1744');
-      flash('rgba(255,23,68,.25)');if(wtr)wtr.write('RGB:RED\n');
+      flash('rgba(255,23,68,.25)');
+      if(wtr)wtr.write('RGB:RED\n');
     }else if(d.action==='HEAL'){
       dmgFx(innerWidth*.3,innerHeight*.35,'+'+d.damage,'#00c853');
-      flash('rgba(0,200,83,.2)');if(wtr)wtr.write('RGB:GREEN\n');
+      flash('rgba(0,200,83,.2)');
+      if(wtr)wtr.write('RGB:GREEN\n');
     }else{
-      flash('rgba(0,188,212,.2)');if(wtr)wtr.write('RGB:CYAN\n');
+      flash('rgba(0,188,212,.2)');
+      if(wtr)wtr.write('RGB:CYAN\n');
     }
-    if(isSp){dmgFx(innerWidth/2,innerHeight*.25,'⚡SPECIAL','#ffd200');if(wtr)wtr.write('RGB:YELLOW\n');}
+    if(isSp){dmgFx(innerWidth/2,innerHeight*.25,'⚡SPECIAL!','#ffd200');if(wtr)wtr.write('RGB:YELLOW\n');}
 
+    // AI 턴
     document.getElementById('ac').classList.add('on');
     document.getElementById('th').innerHTML='🤖 Guardian의 반격!';
     await new Promise(r=>setTimeout(r,2000));
-    await api('aiTurn',{gameId:gid});
+
+    const aiD=await api('aiTurn',{gameId:gid});
+
+    // AI 스토리 표시
+    if(aiD&&aiD.story) showStory('🤖 '+aiD.story);
+
     await ref();
+
     document.getElementById('th').style.display='none';
-    document.getElementById('th').innerHTML='🤖 AI가 마법을 준비 중...';
     document.getElementById('ac').classList.remove('on');
-    document.getElementById('pi').value='';curCard=null;
+    document.getElementById('pi').value='';curCard=null;curUid='';
   }catch(e){console.error(e);document.getElementById('th').style.display='none'}
   busy=false;
 }
@@ -250,31 +272,44 @@ async function ref(){
   if(!gid)return;
   try{
     const d=await api('getState',{gameId:gid});
-    if(!d.success)return;const g=d.game;
-    document.getElementById('ph').style.width=Math.max(g.playerHP,3)+'%';document.getElementById('ph').innerText=g.playerHP;
-    document.getElementById('ah').style.width=Math.max(g.aiHP,3)+'%';document.getElementById('ah').innerText=g.aiHP;
+    if(!d.success||!d.game)return;
+    const g=d.game;
+
+    // HP 업데이트 (라벨 + 바 둘 다)
+    const pPct=Math.max(g.playerHP,3);
+    const aPct=Math.max(g.aiHP,3);
+    document.getElementById('ph').style.width=pPct+'%';
+    document.getElementById('phl').innerText=g.playerHP;
+    document.getElementById('ah').style.width=aPct+'%';
+    document.getElementById('ahl').innerText=g.aiHP;
     document.getElementById('ph').classList.toggle('hpl',g.playerHP<=30);
     document.getElementById('ah').classList.toggle('hpl',g.aiHP<=30);
+
     document.getElementById('tc').innerText=g.turnNum+'/25';
+
     const my=g.status==='WAITING_CARD'||g.status==='PLAYER_PROMPT';
     document.getElementById('pt').style.display=my?'block':'none';
     document.getElementById('pc').classList.toggle('on',my);
+
     const sp=document.getElementById('ps');
     if(g.playerSpecial==='READY'){sp.innerText='⚡ READY';sp.className='badge br'}
     else{sp.innerText='⚡ USED';sp.className='badge bu'}
+
     if(g.lastStory&&g.lastStory!==ls&&g.turnNum>0){
-      ls=g.lastStory;let c='';
+      ls=g.lastStory;
+      let c='';
       if(g.lastRGB==='RED'||g.lastRGB==='RAINBOW')c='at';
       else if(g.lastRGB==='GREEN')c='he';
       else if(g.lastRGB==='CYAN')c='de';
       else if(g.lastRGB==='YELLOW'||g.lastRGB==='GOLD_PULSE')c='cr';
       log(g.lastStory,c);
     }
+
     if(g.status==='FINISHED'){
       const w=g.playerHP>0;
       document.getElementById('wt').innerText=w?'🏆 VICTORY!':'💀 DEFEAT...';
       document.getElementById('ws').innerText=w?'AI를 물리쳤습니다!':'패배했습니다...';
-      if(w){flash('rgba(255,210,0,.3)');if(wtr)wtr.write('RGB:GOLD_PULSE\n');}
+      if(w){if(wtr)wtr.write('RGB:GOLD_PULSE\n');flash('rgba(255,210,0,.3)');}
       else{if(wtr)wtr.write('RGB:BLINK_RED\n');}
       setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
     }
