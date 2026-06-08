@@ -178,7 +178,7 @@ async function autoEndTurn() {
   document.getElementById('dc').style.display = 'none';
   document.getElementById('pa').style.display = 'none';
 
-  // ★ 시간 초과 서사 생성 (무공격)
+  // 시간 초과 서사
   const playerName = document.getElementById('pn').innerText;
   const timeoutStory = "⏰ 시간이 초과되어 " + playerName + "은(는) 공격을 하지 못했다.";
   showStory(timeoutStory);
@@ -357,7 +357,7 @@ function showStory(t){document.getElementById('story-text').innerText=t;document
 function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
 
 async function ref(){
-  if(!gid||busy)return;
+  if(!gid) return;  // ★ busy 체크 제거
   try{
     const d=await api('getState',{gameId:gid});
     if(!d.success||!d.game)return;
