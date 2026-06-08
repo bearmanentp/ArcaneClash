@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>🌌 Arcane Clash</title>
 <style>
-/* 기존 스타일 그대로 사용 (이전 답변의 HTML 스타일) */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
-h1{text-align:center;font-size:2.5em;padding:18px 0 3px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h1{text-align:center;font-size:2.5em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .sub{text-align:center;color:#555;margin-bottom:12px;font-size:.85em}
 .box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;margin:10px auto;max-width:740px}
 input,textarea{width:100%;padding:11px;font-size:14px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;margin:5px 0;resize:none;outline:none}
@@ -119,10 +118,9 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbxpKLdwDsftDPnG71iAtnD0_SkgTwcwaYIR7YbgTImTmGBp2pxnq294GkovlAB0CkfTxg/exec";
+const API = "https://script.google.com/macros/s/AKfycbyY8IkC5IkHGbkUtK0nuRt7PnLnlhFdn53_NymZ5fyy4mokoDjoaEYJvigJGpZ5-Aw6nw/exec";
 let gid=null,port=null,wtr=null,busy=false,ls="",curUid=null,curCard=null;
 
-// 파티클
 const cv=document.getElementById('cv'),cx=cv.getContext('2d');
 function rsz(){cv.width=innerWidth;cv.height=innerHeight}rsz();addEventListener('resize',rsz);
 const pts=[];for(let i=0;i<50;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,s:Math.random()*2+.5,o:Math.random()*.3+.08,c:['255,210,0','102,126,234','118,75,162'][i%3]});
