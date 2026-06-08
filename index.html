@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>🌌 Arcane Clash</title>
 <style>
-/* 기존 스타일 유지 */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
 h1{text-align:center;font-size:2.5em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -130,13 +129,11 @@ function playSound(type) {
     const audio = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audio.createOscillator();
     const gain = audio.createGain();
-    
     if (type === 'attack') { osc.type = 'sawtooth'; osc.frequency.value = 180; gain.gain.value = 0.4; }
     else if (type === 'heal') { osc.type = 'sine'; osc.frequency.value = 880; gain.gain.value = 0.3; }
     else if (type === 'critical') { osc.type = 'square'; osc.frequency.value = 220; gain.gain.value = 0.5; }
     else if (type === 'special') { osc.type = 'sawtooth'; osc.frequency.value = 120; gain.gain.value = 0.6; }
     else if (type === 'victory') { osc.type = 'sine'; osc.frequency.value = 660; gain.gain.value = 0.4; }
-    
     const compressor = audio.createDynamicsCompressor();
     osc.connect(gain); gain.connect(compressor); compressor.connect(audio.destination);
     osc.start();
@@ -144,12 +141,12 @@ function playSound(type) {
   } catch(e) {}
 }
 
-// ===== 타이머 =====
+// ===== 타이머 (20초 고정) =====
 function startTimer() {
   clearInterval(timerInterval);
   timeLeft = 20;
   updateTurnText();
-  
+
   timerInterval = setInterval(() => {
     timeLeft--;
     updateTurnText();
@@ -189,7 +186,7 @@ async function autoEndTurn() {
   busy = false;
 }
 
-// ===== 기존 함수들 =====
+// ===== 기존 함수 =====
 async function api(action,params){
   const qs=params?'&'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(String(v))).join('&'):'';
   const res=await fetch(API+'?action='+action+qs,{redirect:'follow'});
@@ -224,6 +221,7 @@ async function startGame(){
       document.getElementById('pc').classList.add('on');
       log('🌌 Arcane Clash 시작!','sy');
       showStory('🌌 운명의 대결이 펼쳐진다...');
+      startTimer(); // ★ 게임 시작과 동시에 타이머 작동
     }
   }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
@@ -250,7 +248,7 @@ async function drawCard(uid){
       showStory(d.story);
       if(wtr)wtr.write('RGB:PURPLE\n');
       flash('rgba(102,126,234,.3)');
-      startTimer(); // ★ 타이머 시작
+      // drawCard 성공 시 타이머는 재시작하지 않음 (이미 진행 중)
     } else {
       log('❌ '+(d.message||d.error||'오류'),'sy');
     }
@@ -268,7 +266,7 @@ async function cast(isSp){
   document.getElementById('pt').style.display='none';
   document.getElementById('pc').classList.remove('on');
   document.getElementById('th').style.display='block';
-  stopTimer(); // ★ 타이머 정지
+  stopTimer();
   busy=true;
 
   try{
