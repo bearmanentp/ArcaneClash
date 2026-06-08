@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>🌌 Arcane Clash</title>
 <style>
+/* 기존 스타일 유지 (생략) */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
 h1{text-align:center;font-size:2.5em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -167,9 +168,9 @@ function updateTurnText() {
 }
 
 async function autoEndTurn() {
-  if (!gid || busy) return;
+  if (!gid) return;           // ★ busy 체크 제거
   
-  busy = false; // ★ 먼저 busy를 false로 변경
+  busy = false;
   stopTimer();
   document.getElementById('pt').style.display = 'none';
   document.getElementById('pc').classList.remove('on');
@@ -180,7 +181,7 @@ async function autoEndTurn() {
 
   try {
     await api('aiTurn', {gameId: gid});
-    await ref(); // ★ busy가 false 상태에서 ref() 호출
+    await ref();
   } catch(e) { console.error(e); }
   
   document.getElementById('th').style.display = 'none';
