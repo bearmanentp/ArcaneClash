@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🌌 Arcane Clash</title>
+<title> Arcane Clash</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
@@ -103,7 +103,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 <div id="ct" style="font-weight:bold;margin:3px 0"></div>
 </div>
 <div class="pa" id="pa">
-<textarea id="pi" rows="2" placeholder="✨ 시전할 주문을 자유롭게 입력하세요!&#10;예: 불꽃 검으로 적의 심장을 꿰뚫어라!"></textarea>
+<textarea id="pi" rows="2" placeholder="✨ 시전할 주문을 자유롭게 입력하세요!&#10;예: 불꽃 검으로 적의 심장을 꿰어라!"></textarea>
 <div style="display:flex;gap:6px;margin-top:6px">
 <button class="ba" onclick="cast(false)">⚔️ 시전!</button>
 <button class="bs" onclick="cast(true)" id="sb" style="display:none">⚡ 스페셜! (2배)</button>
@@ -128,7 +128,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 </div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbyilHb6lKaf-TV6GRMP2TgRhl4jfpbP5a7NeEQVoxC9bsWZlDErELTAT6l7JFE6JBNaug/exec";
+const API="https://script.google.com/macros/s/AKfycbw4BSyv_T1QEP_-7MSD7-3-tY1OlAGUQgVpgM1tGTUN-3bCkBxn6AvD1blE_v0l46XqQw/exec";
 let gid=null,port=null,wtr=null,busy=false,ls="",curUid="",curCard=null;
 
 // 파티클
@@ -157,6 +157,7 @@ async function connectUSB(){
     (async()=>{while(true){const{value:v,done}=await r.read();if(done)break;
       if(v&&v.includes('CARD:')&&!busy){
         const uid=v.split('CARD:')[1].trim();
+        console.log('카드 인식:',uid);
         if(document.getElementById('pt').style.display==='block')drawCard(uid);
       }
     }})();
@@ -168,6 +169,7 @@ async function startGame(){
   if(!n)return alert('닉네임 입력!');
   try{
     const d=await api('startGame',{player:n});
+    console.log('startGame:',d);
     if(d.success){
       gid=d.gameId;
       document.getElementById('lobby').style.display='none';
@@ -179,6 +181,7 @@ async function startGame(){
       document.getElementById('pc').classList.add('on');
       log('🌌 Arcane Clash 시작! HP: 100 vs 100','sy');
       showStory('🌌 운명의 대결이 펼쳐진다...\n카드를 리더기에 대서 뽑고, 주문을 입력해라!');
+      updateHP(100,100);
     }
   }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
@@ -187,6 +190,7 @@ async function drawCard(uid){
   if(busy||!gid)return;busy=true;
   try{
     const d=await api('drawCard',{gameId:gid,uid:uid});
+    console.log('drawCard:',d);
     if(d.success){
       curCard=d.card;curUid=d.uid||uid;
       const tm={Attack:'⚔️ 공격',Heal:'💚 회복',Defense:'🛡️ 방어'};
@@ -200,12 +204,12 @@ async function drawCard(uid){
       document.getElementById('pi').value='';document.getElementById('pi').focus();
       const sp=document.getElementById('ps').innerText;
       document.getElementById('sb').style.display=sp.includes('READY')?'inline-block':'none';
-      log('🃏 드로우: '+d.card.name+' ('+tm[d.card.type]+' ⚡'+d.card.power+')','sy');
+      log(' 드로우: '+d.card.name+' ('+tm[d.card.type]+' ⚡'+d.card.power+')','sy');
       showStory(d.story);
       if(wtr)wtr.write('RGB:PURPLE\n');
       flash('rgba(102,126,234,.3)');
     } else {
-      log('❌ '+(d.message||'오류'),'sy');
+      log(' '+(d.message||'오류'),'sy');
       if(wtr)wtr.write('RGB:BLINK_RED\n');
     }
   }catch(e){console.error(e)}
@@ -225,76 +229,111 @@ async function cast(isSp){
   busy=true;
 
   try{
-    // 플레이어 턴
+    console.log('playerTurn 호출:',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid});
+    
+    // 1. 플레이어 
     const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid});
-
-    // HP 즉시 업데이트 ( getState 전에 미리 업데이트)
-    await ref();
-
-    // AI 스토리 표시
-    if(d.story) showStory(d.story);
-
-    // 화면 효과
-    if(d.action==='ATTACK'){
-      dmgFx(innerWidth*.7,innerHeight*.35,'-'+d.damage,'#ff1744');
-      flash('rgba(255,23,68,.25)');
-      if(wtr)wtr.write('RGB:RED\n');
-    }else if(d.action==='HEAL'){
-      dmgFx(innerWidth*.3,innerHeight*.35,'+'+d.damage,'#00c853');
-      flash('rgba(0,200,83,.2)');
-      if(wtr)wtr.write('RGB:GREEN\n');
-    }else{
-      flash('rgba(0,188,212,.2)');
-      if(wtr)wtr.write('RGB:CYAN\n');
+    console.log('playerTurn 응답:',d);
+    
+    if(d.success){
+      // HP 즉시 업데이트
+      updateHP(d.playerHP, d.aiHP);
+      
+      // AI 스토리 표시
+      showStory(d.story + (d.extra||''));
+      
+      // 화면 효과
+      if(d.action==='ATTACK'){
+        dmgFx(innerWidth*.7,innerHeight*.35,'-'+d.damage,'#ff1744');
+        flash('rgba(255,23,68,.25)');
+        if(wtr)wtr.write('RGB:RED\n');
+      }else if(d.action==='HEAL'){
+        dmgFx(innerWidth*.3,innerHeight*.35,'+'+d.damage,'#00c853');
+        flash('rgba(0,200,83,.2)');
+        if(wtr)wtr.write('RGB:GREEN\n');
+      }else{
+        flash('rgba(0,188,212,.2)');
+        if(wtr)wtr.write('RGB:CYAN\n');
+      }
+      if(isSp){dmgFx(innerWidth/2,innerHeight*.25,'⚡SPECIAL!','#ffd200');if(wtr)wtr.write('RGB:YELLOW\n');}
+      
+      // 게임 종료 체크
+      if(d.playerHP<=0||d.aiHP<=0){
+        endGame(d.playerHP>0);
+        return;
+      }
+    } else {
+      log('❌ '+d.message,'sy');
+      document.getElementById('th').style.display='none';
+      busy=false;
+      return;
     }
-    if(isSp){dmgFx(innerWidth/2,innerHeight*.25,'⚡SPECIAL!','#ffd200');if(wtr)wtr.write('RGB:YELLOW\n');}
 
-    // AI 턴
+    // 2. AI 턴 (1.5초 대기)
     document.getElementById('ac').classList.add('on');
-    document.getElementById('th').innerHTML='🤖 Guardian의 반격!';
-    await new Promise(r=>setTimeout(r,2000));
+    document.getElementById('th').innerHTML=' Guardian의 반격!';
+    await new Promise(r=>setTimeout(r,1500));
 
+    console.log('aiTurn 호출');
     const aiD=await api('aiTurn',{gameId:gid});
-
-    // AI 스토리 표시
-    if(aiD&&aiD.story) showStory('🤖 '+aiD.story);
-
-    await ref();
+    console.log('aiTurn 응답:',aiD);
+    
+    if(aiD&&aiD.success){
+      // HP 업데이트
+      updateHP(aiD.playerHP, aiD.aiHP);
+      
+      // AI 스토리 표시
+      showStory('🤖 '+aiD.story);
+      log('🤖 '+aiD.story,'at');
+    }
 
     document.getElementById('th').style.display='none';
     document.getElementById('ac').classList.remove('on');
-    document.getElementById('pi').value='';curCard=null;curUid='';
-  }catch(e){console.error(e);document.getElementById('th').style.display='none'}
+    document.getElementById('pi').value='';
+    curCard=null;curUid='';
+    
+    // 플레이어 턴으로 복귀
+    document.getElementById('pt').style.display='block';
+    document.getElementById('pc').classList.add('on');
+    
+  }catch(e){
+    console.error(e);
+    document.getElementById('th').style.display='none';
+  }
   busy=false;
 }
 
+function updateHP(pHP, aHP){
+  const pPct=Math.max(pHP,3);
+  const aPct=Math.max(aHP,3);
+  document.getElementById('ph').style.width=pPct+'%';
+  document.getElementById('phl').innerText=pHP;
+  document.getElementById('ah').style.width=aPct+'%';
+  document.getElementById('ahl').innerText=aHP;
+  document.getElementById('ph').classList.toggle('hpl',pHP<=30);
+  document.getElementById('ah').classList.toggle('hpl',aHP<=30);
+  console.log('HP 업데이트:',pHP,aHP);
+}
+
+function endGame(playerWon){
+  document.getElementById('wt').innerText=playerWon?'🏆 VICTORY!':' DEFEAT...';
+  document.getElementById('ws').innerText=playerWon?'AI를 물리쳤습니다!':'패배했습니다...';
+  if(playerWon){if(wtr)wtr.write('RGB:GOLD_PULSE\n');flash('rgba(255,210,0,.3)');}
+  else{if(wtr)wtr.write('RGB:BLINK_RED\n');}
+  setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
+}
+
 async function ref(){
-  if(!gid)return;
+  if(!gid||busy)return;
   try{
     const d=await api('getState',{gameId:gid});
     if(!d.success||!d.game)return;
     const g=d.game;
-
-    // HP 업데이트 (라벨 + 바 둘 다)
-    const pPct=Math.max(g.playerHP,3);
-    const aPct=Math.max(g.aiHP,3);
-    document.getElementById('ph').style.width=pPct+'%';
-    document.getElementById('phl').innerText=g.playerHP;
-    document.getElementById('ah').style.width=aPct+'%';
-    document.getElementById('ahl').innerText=g.aiHP;
-    document.getElementById('ph').classList.toggle('hpl',g.playerHP<=30);
-    document.getElementById('ah').classList.toggle('hpl',g.aiHP<=30);
-
+    updateHP(g.playerHP, g.aiHP);
     document.getElementById('tc').innerText=g.turnNum+'/25';
-
-    const my=g.status==='WAITING_CARD'||g.status==='PLAYER_PROMPT';
-    document.getElementById('pt').style.display=my?'block':'none';
-    document.getElementById('pc').classList.toggle('on',my);
-
     const sp=document.getElementById('ps');
     if(g.playerSpecial==='READY'){sp.innerText='⚡ READY';sp.className='badge br'}
-    else{sp.innerText='⚡ USED';sp.className='badge bu'}
-
+    else{sp.innerText=' USED';sp.className='badge bu'}
     if(g.lastStory&&g.lastStory!==ls&&g.turnNum>0){
       ls=g.lastStory;
       let c='';
@@ -303,15 +342,6 @@ async function ref(){
       else if(g.lastRGB==='CYAN')c='de';
       else if(g.lastRGB==='YELLOW'||g.lastRGB==='GOLD_PULSE')c='cr';
       log(g.lastStory,c);
-    }
-
-    if(g.status==='FINISHED'){
-      const w=g.playerHP>0;
-      document.getElementById('wt').innerText=w?'🏆 VICTORY!':'💀 DEFEAT...';
-      document.getElementById('ws').innerText=w?'AI를 물리쳤습니다!':'패배했습니다...';
-      if(w){if(wtr)wtr.write('RGB:GOLD_PULSE\n');flash('rgba(255,210,0,.3)');}
-      else{if(wtr)wtr.write('RGB:BLINK_RED\n');}
-      setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
     }
   }catch(e){console.error(e)}
 }
