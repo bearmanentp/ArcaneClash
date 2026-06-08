@@ -56,6 +56,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 @keyframes df{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}40%{transform:translate(-50%,-70%) scale(1.4)}100%{opacity:0;transform:translate(-50%,-140%) scale(1)}}
 .flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;animation:fl .4s forwards}
 @keyframes fl{0%{opacity:.35}100%{opacity:0}}
+.timer{position:absolute;top:-8px;right:-8px;background:#ff1744;color:white;font-size:0.75em;padding:2px 8px;border-radius:10px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -79,7 +80,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 <div id="ps" class="badge br">⚡ READY</div>
 <div class="tm" id="pt">▶ YOUR TURN</div>
 </div>
-<div style="text-align:center"><span class="vs">⚔️</span><br><span style="color:#555;font-size:.7em" id="tc">0/25</span></div>
+<div style="text-align:center"><span class="vs">⚔️</span><br><span style="color:#ffd200;font-size:.85em;font-weight:bold" id="tc">턴 0</span></div>
 <div class="pc" id="ac">
 <h2 style="font-size:1.05em">🤖 Guardian</h2>
 <div class="hpb"><div class="hp hp2" id="ah" style="width:100%"></div><span class="hp-label" id="ahl">100</span></div>
@@ -96,7 +97,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 <div id="ct" style="font-weight:bold;margin:3px 0"></div>
 </div>
 <div class="pa" id="pa">
-<textarea id="pi" rows="2" placeholder="시전할 주문을 입력하세요!"></textarea>
+<textarea id="pi" rows="2" placeholder="시전할 주문을 입력하세요!" onpaste="return false"></textarea>
 <div style="display:flex;gap:6px;margin-top:6px">
 <button class="ba" onclick="cast(false)">⚔️ 시전!</button>
 <button class="bs" onclick="cast(true)" id="sb" style="display:none">⚡ 스페셜!</button>
@@ -120,15 +121,102 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 <script>
 const API = "https://script.google.com/macros/s/AKfycbyB50oB2AozFARQaLlPspYT-2glri8huT-JLCsm_mApTs59ziXoKs1Y5g1hPpxomJ2TZA/exec";
 let gid=null,port=null,wtr=null,busy=false,ls="",curUid=null,curCard=null;
+let timerInterval = null;
+let timeLeft = 15;
 
-const cv=document.getElementById('cv'),cx=cv.getContext('2d');
-function rsz(){cv.width=innerWidth;cv.height=innerHeight}rsz();addEventListener('resize',rsz);
-const pts=[];for(let i=0;i<50;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,s:Math.random()*2+.5,o:Math.random()*.3+.08,c:['255,210,0','102,126,234','118,75,162'][i%3]});
-!function a(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.s,0,6.28);cx.fillStyle='rgba('+p.c+','+p.o+')';cx.fill()});requestAnimationFrame(a)}();
+// ===== 효과음 =====
+function playSound(type) {
+  const audio = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = audio.createOscillator();
+  const gain = audio.createGain();
+  const filter = audio.createBiquadFilter();
 
-function flash(c){const f=document.createElement('div');f.className='flash';f.style.background=c;document.body.appendChild(f);setTimeout(()=>{try{document.body.removeChild(f)}catch(e){}},500)}
-function dmgFx(x,y,v,c){const d=document.createElement('div');d.className='dmg';d.style.cssText='left:'+x+'px;top:'+y+'px;color:'+c;d.innerText=v;document.body.appendChild(d);setTimeout(()=>{try{document.body.removeChild(d)}catch(e){}},1400)}
+  if (type === 'attack') {
+    osc.type = 'sawtooth';
+    osc.frequency.value = 180;
+    gain.gain.value = 0.4;
+    filter.type = 'lowpass';
+    filter.frequency.value = 800;
+  } else if (type === 'heal') {
+    osc.type = 'sine';
+    osc.frequency.value = 880;
+    gain.gain.value = 0.3;
+  } else if (type === 'critical') {
+    osc.type = 'square';
+    osc.frequency.value = 220;
+    gain.gain.value = 0.5;
+  } else if (type === 'special') {
+    osc.type = 'sawtooth';
+    osc.frequency.value = 120;
+    gain.gain.value = 0.6;
+  } else if (type === 'victory') {
+    osc.type = 'sine';
+    osc.frequency.value = 660;
+    gain.gain.value = 0.4;
+  }
 
+  const compressor = audio.createDynamicsCompressor();
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(compressor);
+  compressor.connect(audio.destination);
+
+  osc.start();
+  setTimeout(() => {
+    gain.gain.linearRampToValueAtTime(0.001, audio.currentTime + 0.8);
+    setTimeout(() => osc.stop(), 900);
+  }, type === 'victory' ? 600 : 300);
+}
+
+// ===== 타이머 =====
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 15;
+  document.getElementById('pt').innerHTML = `▶ YOUR TURN <span style="color:#ff6b6b;font-size:0.8em">(${timeLeft}s)</span>`;
+  
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById('pt').innerHTML = `▶ YOUR TURN <span style="color:#ff6b6b;font-size:0.8em">(${timeLeft}s)</span>`;
+    
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      autoEndTurn();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('pt').innerHTML = `▶ YOUR TURN`;
+}
+
+async function autoEndTurn() {
+  if (!gid || busy) return;
+  busy = true;
+  stopTimer();
+  document.getElementById('pt').style.display = 'none';
+  document.getElementById('pc').classList.remove('on');
+  document.getElementById('th').style.display = 'block';
+  document.getElementById('th').innerHTML = '⏰ 시간 초과!';
+
+  try {
+    await api('aiTurn', {gameId: gid});
+    await ref();
+  } catch(e) {
+    console.error(e);
+  }
+  document.getElementById('th').style.display = 'none';
+  busy = false;
+}
+
+// ===== 효과음 호출 =====
+function playEffect(type) {
+  try {
+    playSound(type);
+  } catch(e) {}
+}
+
+// ===== 기존 코드 (일부 수정) =====
 async function api(action,params){
   const qs=params?'&'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(String(v))).join('&'):'';
   const res=await fetch(API+'?action='+action+qs,{redirect:'follow'});
@@ -185,7 +273,7 @@ async function drawCard(uid){
       document.getElementById('pi').value='';document.getElementById('pi').focus();
       const sp=document.getElementById('ps').innerText;
       document.getElementById('sb').style.display=sp.includes('READY')?'inline-block':'none';
-      log('🃏 드로우: '+d.card.name+' ('+tm[d.card.type]+' ⚡'+d.card.power+')','sy');
+      log('🃏 드로우: '+d.card.name+' ('+tm[d.card.type]+')','sy');
       showStory(d.story);
       if(wtr)wtr.write('RGB:PURPLE\n');
       flash('rgba(102,126,234,.3)');
@@ -206,6 +294,7 @@ async function cast(isSp){
   document.getElementById('pt').style.display='none';
   document.getElementById('pc').classList.remove('on');
   document.getElementById('th').style.display='block';
+  stopTimer();
   busy=true;
 
   try{
@@ -215,12 +304,13 @@ async function cast(isSp){
       showStory(d.story);
       log(d.story, d.rgb=='YELLOW'?'cr':d.action=='Attack'?'at':d.action=='Heal'?'he':'de');
       
-      if(d.action=='Attack'){if(wtr)wtr.write('RGB:RED\n');}
-      else if(d.action=='Heal'){if(wtr)wtr.write('RGB:GREEN\n');}
+      if(d.action=='Attack'){playEffect('attack');if(wtr)wtr.write('RGB:RED\n');}
+      else if(d.action=='Heal'){playEffect('heal');if(wtr)wtr.write('RGB:GREEN\n');}
       else{if(wtr)wtr.write('RGB:CYAN\n');}
-      if(isSp&&wtr)wtr.write('RGB:YELLOW\n');
+      if(isSp){playEffect('special');if(wtr)wtr.write('RGB:YELLOW\n');}
 
       if(d.status=='FINISHED'){
+        playEffect('victory');
         endGame(d.playerHP>0);
         return;
       }
@@ -228,6 +318,7 @@ async function cast(isSp){
       alert(d.message || d.error);
       document.getElementById('th').style.display='none';
       busy=false;
+      startTimer();
       return;
     }
 
@@ -254,10 +345,12 @@ async function cast(isSp){
     document.getElementById('pc').classList.add('on');
     document.getElementById('pi').value='';
     curUid=null;curCard=null;
+    startTimer();
 
   }catch(e){
     console.error(e);
     document.getElementById('th').style.display='none';
+    startTimer();
   }
   busy=false;
 }
@@ -280,6 +373,7 @@ function endGame(win){
 
 function showStory(t){document.getElementById('story-text').innerText=t;document.getElementById('story-box').style.display='block'}
 function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
+
 setInterval(()=>{if(gid&&!busy)ref()},3000);
 </script>
 </body>
