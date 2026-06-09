@@ -3,498 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🌌 Arcane Clash</title>
+<title>🌌 Arcane Clash: Complete Mastery</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
-h1{text-align:center;font-size:2.5em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sub{text-align:center;color:#555;margin-bottom:12px;font-size:.85em}
+body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh}
 .box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;margin:10px auto;max-width:740px}
-input,textarea{width:100%;padding:11px;font-size:14px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;margin:5px 0;resize:none;outline:none}
-input:focus,textarea:focus{border-color:#667eea}
-button{padding:11px 20px;font-size:14px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px;transition:all .2s}
-button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-allowed;transform:none}
-.b1{background:#222;color:#fff}.b2{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.ba{background:linear-gradient(135deg,#e53935,#ff1744);color:#fff;width:100%;padding:14px;font-size:16px}
-.bs{background:linear-gradient(135deg,#ffd200,#ffab00);color:#222;width:100%;padding:14px;font-size:16px;animation:gl 2s infinite}
-@keyframes gl{0%,100%{box-shadow:0 0 5px #ffd200}50%{box-shadow:0 0 25px #ffd200}}
 .arena{display:none;grid-template-columns:1fr 60px 1fr;gap:12px;align-items:center}
-.pc{background:rgba(255,255,255,.05);border-radius:14px;padding:15px;text-align:center;border:2px solid rgba(255,255,255,.08);transition:all .3s}
-.pc.on{border-color:#ffd200;box-shadow:0 0 30px rgba(255,210,0,.2)}
+.pc{background:rgba(255,255,255,.05);border-radius:14px;padding:15px;text-align:center;border:2px solid rgba(255,255,255,.08)}
 .hpb{height:28px;background:rgba(0,0,0,.5);border-radius:8px;overflow:hidden;margin:8px 0;position:relative}
-.hp{height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85em;transition:width .6s;border-radius:8px;min-width:24px;position:relative;z-index:1}
+.hp{height:100%;transition:width .6s}
 .hp1{background:linear-gradient(90deg,#00c853,#69f0ae)}.hp2{background:linear-gradient(90deg,#e53935,#ff1744)}
-.hpl{animation:blink .5s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.hp-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;font-size:.85em;font-weight:bold;text-shadow:0 0 4px rgba(0,0,0,.8);pointer-events:none}
-.vs{font-size:1.8em;font-weight:900;color:#ffd200}
-.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7em;font-weight:bold;margin-top:4px}
-.br{background:#ffd200;color:#222}.bu{background:#333;color:#666}
-.tm{color:#ffd200;font-weight:bold;margin-top:6px;display:none;animation:bn .7s infinite}
-@keyframes bn{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.card-show{display:none;background:linear-gradient(135deg,rgba(102,126,234,.12),rgba(118,75,162,.12));border:2px solid #667eea;border-radius:14px;padding:16px;margin:10px 0;text-align:center;animation:ci .4s}
-@keyframes ci{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-.cn{font-size:1.3em;font-weight:bold;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.cp{font-size:2em;font-weight:900;color:#ffd200;margin:2px 0;text-shadow:0 0 12px rgba(255,210,0,.4)}
-.pa{display:none;margin-top:8px}
-#story-box{display:none;margin:10px auto;max-width:740px;padding:14px 18px;background:rgba(255,210,0,.06);border:1px solid rgba(255,210,0,.2);border-radius:12px;animation:si .5s}
-@keyframes si{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-#story-text{font-size:1em;line-height:1.8;color:#ffd200;font-style:italic;white-space:pre-line}
-#lg{max-height:280px;overflow-y:auto;padding:8px;background:rgba(0,0,0,.3);border-radius:10px}
-.en{padding:10px 12px;margin:5px 0;border-radius:8px;background:rgba(255,255,255,.05);border-left:4px solid #667eea;font-size:.82em;line-height:1.5;animation:sl .3s}
-.en.at{border-left-color:#ff1744;background:rgba(255,23,68,.05)}
-.en.he{border-left-color:#00c853;background:rgba(0,200,83,.05)}
-.en.de{border-left-color:#00bcd4;background:rgba(0,188,212,.05)}
-.en.cr{border-left-color:#ffd200;background:rgba(255,210,0,.08);font-weight:bold}
-.en.sy{border-left-color:#444;color:#777;font-size:.76em}
-@keyframes sl{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-.th{display:none;text-align:center;padding:16px;font-size:1.15em;color:#ff6b6b}
-#ov{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.96);z-index:1000;flex-direction:column;justify-content:center;align-items:center}
-.wt{font-size:3.5em;font-weight:900;margin-bottom:12px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-#cv{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
-.dmg{position:fixed;font-size:2.5em;font-weight:900;pointer-events:none;z-index:100;text-shadow:0 0 20px currentColor;animation:df 1.2s forwards}
-@keyframes df{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}40%{transform:translate(-50%,-70%) scale(1.4)}100%{opacity:0;transform:translate(-50%,-140%) scale(1)}}
-.flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;animation:fl .4s forwards}
-@keyframes fl{0%{opacity:.35}100%{opacity:0}}
+.hp-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.85em;text-shadow:0 0 4px #000}
+#shield-ui{color:#00bcd4;font-weight:bold;font-size:0.8em;margin-top:5px}
+input,textarea{width:100%;padding:11px;font-size:14px;border-radius:10px;border:2px solid #333;background:#111;color:#fff;margin:5px 0}
+button{padding:12px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px;transition:0.2s}
+.b2{background:#667eea;color:#fff;width:100%}.ba{background:#ff1744;color:#fff;width:100%}
+.bs{background:linear-gradient(135deg,#ffd200,#ffab00);color:#222;width:100%;animation:gl 2s infinite}
+@keyframes gl{0%,100%{box-shadow:0 0 5px #ffd200}50%{box-shadow:0 0 20px #ffd200}}
+#timer{text-align:center;font-size:2.5em;font-weight:900;color:#ff6b6b}
+#webcam{width:100%;max-width:320px;border-radius:12px;border:2px solid #ffd200;display:none;margin:10px auto;transform:scaleX(-1)}
+.log{max-height:120px;overflow-y:auto;background:rgba(0,0,0,0.3);padding:10px;border-radius:10px;font-size:0.8em;margin-top:10px}
 </style>
 </head>
 <body>
-<canvas id="cv"></canvas>
-<h1>🌌 Arcane Clash</h1>
-<p class="sub">카드마다 랜덤 능력! AI가 만드는 전투 서사!</p>
+<h1 style="text-align:center;padding:20px;color:#ffd200">🌌 Arcane Clash</h1>
+<div id="timer">60</div>
 
 <div class="box" id="lobby">
-<input type="text" id="nm" placeholder="닉네임 입력" maxlength="12">
-<div style="display:flex;gap:8px;margin-top:4px">
-<button class="b1" onclick="connectUSB()" id="ub">🔌 USB 연결</button>
-<button class="b2" onclick="startGame()">⚔️ 게임 시작</button>
-</div>
-<div id="ms" style="margin-top:8px;color:#555"></div>
+    <input type="text" id="nm" placeholder="닉네임 입력">
+    <button class="b2" onclick="startGame()">⚔️ 게임 시작</button>
+    <button id="ub" onclick="connectUSB()" style="width:100%;background:#333;color:#fff;margin-top:5px">🔌 리더기 연결</button>
 </div>
 
 <div class="box arena" id="ar">
-<div class="pc" id="pc">
-<h2 id="pn" style="font-size:1.05em">Player</h2>
-<div class="hpb"><div class="hp hp1" id="ph" style="width:100%"></div><span class="hp-label" id="phl">100</span></div>
-<div id="ps" class="badge br">⚡ READY</div>
-<div class="tm" id="pt">▶ YOUR TURN</div>
+    <div class="pc" id="pc">
+        <h2 id="pn" style="font-size:1em">Player</h2>
+        <div class="hpb"><div class="hp hp1" id="ph" style="width:100%"></div><span class="hp-label" id="phl">100</span></div>
+        <div id="shield-ui">🛡️ 보호막: 0</div>
+    </div>
+    <div style="text-align:center;font-size:0.8em">VS<br><span id="tc">턴 1</span></div>
+    <div class="pc">
+        <h2 style="font-size:1em">🤖 Guardian</h2>
+        <div class="hpb"><div class="hp hp2" id="ah" style="width:100%"></div><span class="hp-label" id="ahl">100</span></div>
+    </div>
 </div>
-<div style="text-align:center"><span class="vs">⚔️</span><br><span style="color:#ffd200;font-size:.85em;font-weight:bold" id="tc">턴 0</span></div>
-<div class="pc" id="ac">
-<h2 style="font-size:1.05em">🤖 Guardian</h2>
-<div class="hpb"><div class="hp hp2" id="ah" style="width:100%"></div><span class="hp-label" id="ahl">100</span></div>
-</div>
-</div>
-
-<div class="th" id="th">🤖 AI가 마법을 준비 중...</div>
 
 <div class="box" id="da" style="display:none">
-<h2 style="margin-bottom:3px">🃏 카드를 리더기에 대주세요!</h2>
-<div class="card-show" id="dc">
-<div class="cn" id="cn"></div>
-<div class="cp" id="cpw"></div>
-<div id="ct" style="font-weight:bold;margin:3px 0"></div>
-</div>
-<div class="pa" id="pa">
-<textarea id="pi" rows="2" placeholder="시전할 주문을 입력하세요!" onpaste="return false"></textarea>
-<div style="display:flex;gap:6px;margin-top:6px">
-<button class="ba" onclick="cast(false)">⚔️ 시전!</button>
-<button class="bs" onclick="cast(true)" id="sb" style="display:none">⚡ 스페셜!</button>
-</div>
-</div>
-</div>
-
-<div id="story-box"><div id="story-text"></div></div>
-
-<div class="box" id="lb" style="display:none">
-<h3 style="margin-bottom:6px;font-size:.9em">📜 로그</h3>
-<div id="lg"></div>
+    <div id="dc" style="text-align:center;color:#ffd200;margin-bottom:10px;display:none">
+        <h3 id="cn">카드명</h3><p id="cp"></p>
+    </div>
+    <video id="webcam" autoplay playsinline></video>
+    <textarea id="pi" rows="2" placeholder="주문을 입력하세요. 스페셜 공격 시 사진 속 방어나 공격 도구를 언급하세요!"></textarea>
+    <div style="display:flex;gap:5px">
+        <button class="ba" onclick="cast(false)">⚔️ 일반 시전</button>
+        <button class="bs" id="sb" onclick="cast(true)">✨ 성유물 각성 (Vision)</button>
+    </div>
+    <div id="th" style="display:none;text-align:center;color:#ffd200;margin-top:10px">🪄 AI 분석 중...</div>
+    <div id="story-box" style="margin-top:15px;color:#ffd200;text-align:center;font-size:0.9em"></div>
+    <div class="log" id="lg"></div>
 </div>
 
-<div id="ov">
-<div class="wt" id="wt"></div>
-<p style="color:#888;margin-bottom:20px" id="ws"></p>
-<button onclick="location.reload()" style="padding:14px 40px;font-size:1.1em;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;cursor:pointer">🔄 다시 하기</button>
-</div>
+<canvas id="cap" style="display:none"></canvas>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwEuiPtQ4gTgKwe5JPMqZKCk8OQE1DT8mOuUyClBzcKEEobqiP-jVqFeH8q5fTu02Sdng/exec";
-let gid=null,port=null,wtr=null,busy=false,ls="",serialBuffer = "",curUid=null,curCard=null;
-let timerInterval = null;
-let timeLeft = 30;
+const API = "https://script.google.com/macros/s/AKfycbyXn5unM90vGabB1vxaVVTEhd6m6-pj5xYU4PGCQazkBQGRc6oTGR-bC55T5HOHkb4pAg/exec"; // GAS URL 입력
+let gid=null, port=null, wtr=null, busy=false, timeLeft=60, timer=null;
 
-// ===== 효과음 =====
-function playSound(type) {
-  try {
-    const audio = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audio.createOscillator();
-    const gain = audio.createGain();
-    if (type === 'attack') { osc.type = 'sawtooth'; osc.frequency.value = 180; gain.gain.value = 0.4; }
-    else if (type === 'heal') { osc.type = 'sine'; osc.frequency.value = 880; gain.gain.value = 0.3; }
-    else if (type === 'critical') { osc.type = 'square'; osc.frequency.value = 220; gain.gain.value = 0.5; }
-    else if (type === 'special') { osc.type = 'sawtooth'; osc.frequency.value = 120; gain.gain.value = 0.6; }
-    else if (type === 'victory') { osc.type = 'sine'; osc.frequency.value = 660; gain.gain.value = 0.4; }
-    const compressor = audio.createDynamicsCompressor();
-    osc.connect(gain); gain.connect(compressor); compressor.connect(audio.destination);
-    osc.start();
-    setTimeout(() => { gain.gain.linearRampToValueAtTime(0.001, audio.currentTime + 0.8); setTimeout(() => osc.stop(), 900); }, 300);
-  } catch(e) {}
+async function startGame() {
+    const n = document.getElementById('nm').value;
+    if(!n) return alert("닉네임!");
+    const d = await fetch(API+"?action=startGame&player="+encodeURIComponent(n)).then(r=>r.json());
+    if(d.success) {
+        gid = d.gameId;
+        document.getElementById('lobby').style.display='none';
+        document.getElementById('ar').style.display='grid';
+        document.getElementById('da').style.display='block';
+        startTimer(); initWebcam();
+    }
 }
 
-function flash(color) {
-  const f = document.createElement('div');
-  f.className = 'flash';
-  f.style.background = color;
-  document.body.appendChild(f);
-  setTimeout(() => f.remove(), 400);
+async function initWebcam() {
+    const stream = await navigator.mediaDevices.getUserMedia({video:true});
+    document.getElementById('webcam').srcObject = stream;
+    document.getElementById('webcam').style.display = 'block';
 }
 
-// ===== 타이머 (30초 고정) =====
 function startTimer() {
-  clearInterval(timerInterval);
-  timeLeft = 30;
-  updateTurnText();
-
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTurnText();
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      autoEndTurn();
-    }
-  }, 1000);
+    clearInterval(timer); timeLeft = 60;
+    timer = setInterval(() => {
+        timeLeft--; document.getElementById('timer').innerText = timeLeft;
+        if(timeLeft <= 0) { clearInterval(timer); cast(false); }
+    }, 1000);
 }
 
-function stopTimer() {
-  clearInterval(timerInterval);
-  document.getElementById('pt').innerHTML = `▶ YOUR TURN`;
-}
-
-function updateTurnText() {
-  document.getElementById('pt').innerHTML = `▶ YOUR TURN <span style="color:#ff6b6b;font-size:0.75em">(${timeLeft}s)</span>`;
-}
-
-async function autoEndTurn() {
-  if (!gid || busy) return;
-  busy = true;
-  stopTimer();
-  
-  // UI 초기화
-  document.getElementById('dc').style.display = 'none';
-  document.getElementById('pa').style.display = 'none';
-  document.getElementById('pt').style.display = 'none';
-  document.getElementById('pc').classList.remove('on');
-
-  // 안내 메시지
-  showStory("⏰ 시간 초과! Guardian이 당신의 빈틈을 노립니다!");
-  
-  try {
-    // 이제 서버의 aiTurn은 상태(status)와 관계없이 작동합니다.
-    const ai = await api('aiTurn', {gameId: gid});
-    
-    if (ai && ai.success) {
-      ls = ai.story;
-      updateHP(ai.playerHP, ai.aiHP);
-      showStory('🤖 ' + ai.story);
-      log('🤖 ' + ai.story, 'at');
-      
-      if (wtr) wtr.write('RGB:' + ai.rgb + '\n');
-      if (ai.status == 'FINISHED') {
-        endGame(ai.playerHP > 0);
-        return;
-      }
-    }
-    
-    // AI 행동 종료 후 다시 플레이어 턴으로
-    await new Promise(r => setTimeout(r, 2000));
-    document.getElementById('pt').style.display = 'block';
-    document.getElementById('pc').classList.add('on');
-    busy = false;
-    startTimer();
-  } catch(e) {
-    busy = false;
-    startTimer();
-  }
-}
-
-// ===== 기존 함수 =====
-async function api(action,params){
-  const qs=params?'&'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(String(v))).join('&'):'';
-  const res=await fetch(API+'?action='+action+qs,{redirect:'follow'});
-  return await res.json();
-}
-
-// RFID 인식 개선 (버퍼링 로직 추가)
-async function connectUSB(){
-  if(!("serial" in navigator)) return alert("Chrome 사용!");
-  try {
-    port = await navigator.serial.requestPort();
-    await port.open({ baudRate: 115200 });
-    const encoder = new TextEncoderStream();
-    encoder.readable.pipeTo(port.writable);
-    wtr = encoder.writable.getWriter();
-    
-    const decoder = new TextDecoderStream();
-    port.readable.pipeTo(decoder.writable);
-    const reader = decoder.readable.getReader();
-
-    document.getElementById('ub').innerText='✅ 연결됨';
-    document.getElementById('ub').disabled=true;
-    log('🔌 RFID 리더기 연결 성공', 'sy');
-
-    // 시리얼 읽기 루프 개선
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      if (value) {
-        serialBuffer += value; // 데이터를 버퍼에 추가
-        if (serialBuffer.includes('\n')) { // 줄바꿈이 있을 때만 처리
-          const lines = serialBuffer.split('\n');
-          serialBuffer = lines.pop(); // 마지막 미완성 줄은 버퍼에 남김
-          
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (trimmed.includes('CARD:') && !busy) {
-              const uid = trimmed.split('CARD:')[1].trim();
-              // 인식 즉시 UI 피드백 (느린 느낌 제거)
-              document.getElementById('th').style.display = 'block';
-              document.getElementById('th').innerHTML = '🔍 카드 감지됨: ' + uid;
-              if (document.getElementById('pt').style.display === 'block') {
-                drawCard(uid);
-              }
-            }
-          }
+async function connectUSB() {
+    try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+        const encoder = new TextEncoderStream();
+        encoder.readable.pipeTo(port.writable);
+        wtr = encoder.writable.getWriter();
+        const reader = port.readable.getReader();
+        document.getElementById('ub').innerText = "✅ 연결됨";
+        while(true) {
+            const {value, done} = await reader.read();
+            if(done) break;
+            const txt = new TextDecoder().decode(value);
+            if(txt.includes('CARD:') && !busy) drawCard(txt.split('CARD:')[1].trim());
         }
-      }
-    }
-  } catch(e) { alert(e.message); }
+    } catch(e) { alert(e.message); }
 }
 
-async function startGame(){
-  const n=document.getElementById('nm').value.trim();
-  if(!n)return alert('닉네임 입력!');
-  try{
-    const d=await api('startGame',{player:n});
-    console.log('startGame 응답:', d);
-    if(d.success){
-      gid=d.gameId;
-      busy = false; // 게임 시작 시 조작 가능하게 초기화
-      console.log('게임 ID 설정:', gid);
-      document.getElementById('lobby').style.display='none';
-      document.getElementById('ar').style.display='grid';
-      document.getElementById('da').style.display='block';
-      document.getElementById('lb').style.display='block';
-      document.getElementById('pn').innerText=n;
-      document.getElementById('pt').style.display='block';
-      document.getElementById('pc').classList.add('on');
-      log('🌌 Arcane Clash 시작!','sy');
-      showStory('🌌 운명의 대결이 펼쳐진다...');
-      startTimer(); // ★ 게임 시작과 동시에 타이머 작동
-    } else {
-      document.getElementById('ms').innerHTML='❌ '+(d.error||d.message||'오류');
+async function drawCard(uid) {
+    const d = await fetch(API+`?action=drawCard&gameId=${gid}&uid=${uid}`).then(r=>r.json());
+    if(d.success) {
+        document.getElementById('dc').style.display = 'block';
+        document.getElementById('cn').innerText = d.card.name;
+        document.getElementById('cp').innerText = `⚡ ${d.card.type} 파워: ${d.card.p}`;
+        addLog(d.story);
+        if(wtr) wtr.write('RGB:PURPLE\n');
     }
-  }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
 
-// 카드 드로우 함수 (중복 호출 방지 강화)
-async function drawCard(uid){
-  if(busy || !gid) return;
-  busy = true;
-  
-  // 로딩 표시
-  document.getElementById('th').style.display = 'block';
-  document.getElementById('th').innerHTML = '🔍 카드를 분석 중...';
-
-  try{
-    const d = await api('drawCard', {gameId: gid, uid: uid});
-    if(d.success){
-      curUid = d.uid || uid;
-      curCard = d.card;
-      const tm = {Attack: '⚔️ 공격', Heal: '💚 회복', Defense: '🛡️ 방어'};
-      const cc = {Attack: '#ff1744', Heal: '#00c853', Defense: '#00bcd4'};
-      
-      document.getElementById('cn').innerText = '✨ ' + d.card.name;
-      document.getElementById('cpw').innerText = '⚡ ' + d.card.power;
-      const ct = document.getElementById('ct');
-      ct.innerText = tm[d.card.type]; 
-      ct.style.color = cc[d.card.type];
-      
-      document.getElementById('dc').style.display = 'block';
-      document.getElementById('pa').style.display = 'block';
-      document.getElementById('th').style.display = 'none'; // 로딩 제거
-      
-      const sp = document.getElementById('ps').innerText;
-      document.getElementById('sb').style.display = sp.includes('READY') ? 'inline-block' : 'none';
-      
-      ls = d.story;
-      showStory(d.story);
-      log('🃏 드로우: ' + d.card.name, 'sy');
-      
-      if(wtr) wtr.write('RGB:PURPLE\n');
-      flash('rgba(102,126,234,.3)'); // 이제 에러 안남
-    } else {
-      document.getElementById('th').innerHTML = '❌ 인식 실패: ' + (d.message || '알 수 없는 오류');
-      setTimeout(() => { if(busy) document.getElementById('th').style.display = 'none'; }, 2000);
-    }
-  } catch(e) {
-    console.error(e);
-  }
-  busy = false;
-}
-
-// cast 함수 내에서도 ls 업데이트 필수
 async function cast(isSp) {
-  const p = document.getElementById('pi').value.trim();
-  if (!p) return alert('주문 입력!');
-  if (!curUid) return alert('카드를 먼저 뽑으세요!');
-
-  // 1. UI 잠금 및 초기화
-  busy = true; 
-  stopTimer();
-  document.getElementById('dc').style.display = 'none';
-  document.getElementById('pa').style.display = 'none';
-  document.getElementById('pt').style.display = 'none';
-  document.getElementById('pc').classList.remove('on');
-  
-  // 로딩 상태 표시
-  document.getElementById('th').style.display = 'block';
-  document.getElementById('th').innerHTML = '🪄 마법을 시전 중...';
-
-  try {
-    // 2. 플레이어 공격 API 호출
-    const d = await api('playerTurn', {gameId: gid, prompt: p, isSpecial: String(isSp), uid: curUid});
-    console.log('PlayerTurn 결과:', d);
-
-    if (d.success) {
-      // ⭐ 핵심: 로그 중복 방지를 위해 서버에서 온 스토리를 즉시 ls에 저장
-      ls = d.story; 
-      
-      updateHP(d.playerHP, d.aiHP);
-      showStory(d.story);
-      log(d.story, d.rgb == 'YELLOW' ? 'cr' : d.action == 'Attack' ? 'at' : d.action == 'Heal' ? 'he' : 'de');
-      
-      // 시각/음향 효과
-      if (d.action == 'Attack') { playSound('attack'); if (wtr) wtr.write('RGB:RED\n'); }
-      else if (d.action == 'Heal') { playSound('heal'); if (wtr) wtr.write('RGB:GREEN\n'); }
-      if (isSp) { playSound('special'); if (wtr) wtr.write('RGB:YELLOW\n'); }
-
-      // 게임 종료 체크
-      if (d.status == 'FINISHED') {
-        endGame(d.playerHP > 0);
-        return;
-      }
+    const p = document.getElementById('pi').value;
+    if(busy) return; busy = true; clearInterval(timer);
+    document.getElementById('th').style.display = 'block';
+    
+    let res;
+    if(isSp) {
+        const v = document.getElementById('webcam');
+        const c = document.getElementById('cap');
+        c.width = v.videoWidth; c.height = v.videoHeight;
+        c.getContext('2d').drawImage(v, 0, 0);
+        const img = c.toDataURL('image/jpeg', 0.5);
+        res = await fetch(API, { method:'POST', body:JSON.stringify({action:'specialAttack', gameId:gid, prompt:p, image:img}) }).then(r=>r.json());
     } else {
-      throw new Error(d.message || d.error);
+        res = await fetch(API+`?action=playerTurn&gameId=${gid}&prompt=${encodeURIComponent(p)}`).then(r=>r.json());
     }
+    handleResult(res);
+}
 
-    // 3. AI 턴으로 전환 준비 (1.5초 대기)
-    await new Promise(r => setTimeout(r, 1500));
-    
-    document.getElementById('ac').classList.add('on');
-    document.getElementById('th').innerHTML = '🤖 Guardian의 반격 준비 중...';
-    
-    // 4. AI 공격 API 호출
-    const ai = await api('aiTurn', {gameId: gid});
-    console.log('AITurn 결과:', ai);
-
-    if (ai && ai.success) {
-      // ⭐ AI의 스토리도 출력 직후 ls에 저장하여 ref()와 충돌 방지
-      ls = ai.story; 
-      
-      updateHP(ai.playerHP, ai.aiHP);
-      showStory('🤖 ' + ai.story);
-      log('🤖 ' + ai.story, 'at');
-      if (wtr) wtr.write('RGB:' + ai.rgb + '\n');
-      
-      if (ai.status == 'FINISHED') {
-        endGame(ai.playerHP > 0);
-        return;
-      }
-    } else {
-      log('⚠️ AI가 혼란에 빠져 공격을 포기했습니다.', 'sy');
-    }
-
-    // 5. 다시 플레이어 턴으로 복구
-    await new Promise(r => setTimeout(r, 1200)); // 결과 읽을 시간 확보
-    
+function handleResult(d) {
     document.getElementById('th').style.display = 'none';
-    document.getElementById('ac').classList.remove('on');
-    document.getElementById('pt').style.display = 'block';
-    document.getElementById('pc').classList.add('on');
-    document.getElementById('pi').value = '';
+    if(!d.success) { busy=false; startTimer(); return alert(d.message); }
     
-    // 카드 정보 및 상태 초기화
-    curUid = null;
-    curCard = null;
-    busy = false; // 이제 새로운 카드 인식을 허용
-    startTimer(); // 30초 타이머 시작
+    document.getElementById('ph').style.width = d.playerHP + '%';
+    document.getElementById('phl').innerText = d.playerHP;
+    document.getElementById('ah').style.width = d.aiHP + '%';
+    document.getElementById('ahl').innerText = d.aiHP;
+    document.getElementById('shield-ui').innerText = `🛡️ 보호막: ${d.shield || 0}`;
+    document.getElementById('story-box').innerText = d.story;
+    addLog(d.story);
+    if(wtr) wtr.write(`RGB:${d.rgb}\n`);
 
-  } catch (e) {
-    console.error('전투 중 오류 발생:', e);
-    alert('오류가 발생했습니다: ' + e.message);
-    document.getElementById('th').style.display = 'none';
-    busy = false;
-    startTimer();
-  }
-}
-
-function updateHP(p,a){
-  document.getElementById('ph').style.width=Math.max(p,1)+'%';
-  document.getElementById('phl').innerText=p;
-  document.getElementById('ah').style.width=Math.max(a,1)+'%';
-  document.getElementById('ahl').innerText=a;
-  document.getElementById('ph').classList.toggle('hpl',p<=30);
-  document.getElementById('ah').classList.toggle('hpl',a<=30);
-}
-
-function endGame(win){
-  document.getElementById('wt').innerText=win?'🏆 VICTORY!':'💀 DEFEAT...';
-  document.getElementById('ws').innerText=win?'AI를 물리쳤습니다!':'패배했습니다...';
-  if(wtr)wtr.write(win?'RGB:GOLD_PULSE\n':'RGB:BLINK_RED\n');
-  setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
-}
-
-function showStory(t){document.getElementById('story-text').innerText=t;document.getElementById('story-box').style.display='block'}
-function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
-
-// 로그 중복 방지가 적용된 ref 함수
-async function ref() {
-  if (!gid || busy) return; // 사용자가 조작 중일 때는 동기화 건너뜀
-  try {
-    const d = await api('getState', { gameId: gid });
-    if (!d.success || !d.game) return;
-    const g = d.game;
+    if(d.aiHP <= 0 || d.playerHP <= 0) return alert(d.aiHP<=0?"🏆 승리!":"💀 패배...");
     
-    updateHP(g.playerHP, g.aiHP);
-    document.getElementById('tc').innerText = `턴 ${g.turnNum}`;
-    
-    const sp = document.getElementById('ps');
-    if (g.playerSpecial === 'READY') {
-      sp.innerText = '⚡ READY'; sp.className = 'badge br';
-    } else {
-      sp.innerText = '⚡ USED'; sp.className = 'badge bu';
-    }
-
-    // ⭐ 핵심: ls와 비교하여 새로운 스토리일 때만 로그 출력
-    if (g.lastStory && g.lastStory.trim() !== ls.trim()) {
-      ls = g.lastStory; // 출력 직전 업데이트하여 중복 방지
-      let c = '';
-      if (g.lastRGB === 'RED') c = 'at';
-      else if (g.lastRGB === 'GREEN') c = 'he';
-      else if (g.lastRGB === 'CYAN') c = 'de';
-      else if (g.lastRGB === 'YELLOW') c = 'cr';
-      
-      log(g.lastStory, c);
-      showStory(g.lastStory);
-    }
-
-    if (g.status === 'FINISHED') {
-      endGame(g.playerHP > 0);
-    }
-  } catch (e) { console.error(e); }
+    setTimeout(async () => {
+        const ai = await fetch(API+`?action=aiTurn&gameId=${gid}`).then(r=>r.json());
+        document.getElementById('ph').style.width = ai.playerHP + '%';
+        document.getElementById('phl').innerText = ai.playerHP;
+        document.getElementById('shield-ui').innerText = `🛡️ 보호막: 0`;
+        document.getElementById('story-box').innerText = ai.story;
+        addLog(ai.story);
+        if(wtr) wtr.write(`RGB:${ai.rgb}\n`);
+        busy = false; document.getElementById('pi').value = ""; startTimer();
+    }, 2000);
 }
 
-setInterval(()=>{if(gid&&!busy)ref()},3000);
+function addLog(t) {
+    const l = document.getElementById('lg');
+    l.innerHTML = `<div>> ${t}</div>` + l.innerHTML;
+}
 </script>
 </body>
 </html>
