@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>🌌 Arcane Clash</title>
 <style>
-/* 기존 스타일 + HP 라벨 + timer */
+/* 기존 스타일 + HP 라벨 */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh}
 h1{text-align:center;font-size:2.5em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -118,7 +118,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbz26i1Y7q0b_xyRRwmUzU1lz5WqkifWdCyZKne-eapctOphQj8uAkARYFtayC5pg5uKHQ/exec";
+const API = "https://script.google.com/macros/s/여기에_배포URL/exec";
 let gid=null,port=null,wtr=null,busy=false,ls="",curUid=null,curCard=null;
 let timerInterval = null;
 let timeLeft = 60;
@@ -186,7 +186,6 @@ async function autoEndTurn() {
   document.getElementById('ac').classList.add('on');
   await new Promise(r => setTimeout(r, 1500));
 
-  // AI 턴 (미리 준비된 프롬프트)
   const aiPrompts = [
     "어둠의 손이 뻗어져 나온다",
     "얼음 폭풍이 몰아친다",
@@ -243,7 +242,7 @@ async function startGame(){
       document.getElementById('pc').classList.add('on');
       log('🌌 Arcane Clash 시작!','sy');
       showStory('🌌 운명의 대결이 펼쳐진다...');
-      startTimer(); // ★ 게임 시작과 동시에 타이머 작동
+      startTimer();
     }
   }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
@@ -295,10 +294,9 @@ async function cast(isSp){
     let visionScore = 0.5;
     
     if (!isSp) {
-      // Vision 분석 (간단한 키워드 매칭)
       visionScore = analyzeVisionScore(p, curCard);
     } else {
-      visionScore = 1.0; // 스페셜은 무조건 최대
+      visionScore = 1.0;
     }
 
     const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid,visionScore:visionScore});
@@ -358,15 +356,11 @@ async function cast(isSp){
   busy=false;
 }
 
-// 간단한 Vision 점수 계산 (키워드 매칭)
 function analyzeVisionScore(prompt, card) {
   const keywords = prompt.toLowerCase().split(' ');
   let score = 0.3;
-  
-  // 카드 이름과 관련된 키워드가 있으면 점수 증가
   if (keywords.some(k => card.name.toLowerCase().includes(k))) score += 0.4;
   if (keywords.some(k => card.type.toLowerCase().includes(k))) score += 0.3;
-  
   return Math.min(score, 1.0);
 }
 
