@@ -3,299 +3,389 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🌌 Arcane Clash - Vision</title>
+<title>🌌 Arcane Clash</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh}
-h1{text-align:center;font-size:2.3em;padding:15px 0 3px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;margin:10px auto;max-width:780px}
-#camera-container{position:relative;width:100%;max-width:640px;margin:0 auto;border-radius:12px;overflow:hidden;border:2px solid #667eea}
-#camera-video{width:100%;height:auto;display:block}
-#camera-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-#timer{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.7);padding:4px 12px;border-radius:20px;font-weight:bold}
-button{padding:12px 24px;font-size:15px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px}
-.b2{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.ba{background:linear-gradient(135deg,#e53935,#ff1744);color:#fff}
-.bs{background:linear-gradient(135deg,#ffd200,#ffab00);color:#222}
+body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
+h1{text-align:center;font-size:2.5em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{text-align:center;color:#555;margin-bottom:12px;font-size:.85em}
+.box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;margin:10px auto;max-width:740px}
+input,textarea{width:100%;padding:11px;font-size:14px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;margin:5px 0;resize:none;outline:none}
+input:focus,textarea:focus{border-color:#667eea}
+button{padding:11px 20px;font-size:14px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px;transition:all .2s}
+button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.b1{background:#222;color:#fff}.b2{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.ba{background:linear-gradient(135deg,#e53935,#ff1744);color:#fff;width:100%;padding:14px;font-size:16px}
+.bs{background:linear-gradient(135deg,#ffd200,#ffab00);color:#222;width:100%;padding:14px;font-size:16px;animation:gl 2s infinite}
+@keyframes gl{0%,100%{box-shadow:0 0 5px #ffd200}50%{box-shadow:0 0 25px #ffd200}}
+.arena{display:none;grid-template-columns:1fr 60px 1fr;gap:12px;align-items:center}
+.pc{background:rgba(255,255,255,.05);border-radius:14px;padding:15px;text-align:center;border:2px solid rgba(255,255,255,.08);transition:all .3s}
+.pc.on{border-color:#ffd200;box-shadow:0 0 30px rgba(255,210,0,.2)}
+.hpb{height:28px;background:rgba(0,0,0,.5);border-radius:8px;overflow:hidden;margin:8px 0;position:relative}
+.hp{height:100%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85em;transition:width .6s;border-radius:8px;min-width:24px;position:relative;z-index:1}
+.hp1{background:linear-gradient(90deg,#00c853,#69f0ae)}.hp2{background:linear-gradient(90deg,#e53935,#ff1744)}
+.hpl{animation:blink .5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hp-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;font-size:.85em;font-weight:bold;text-shadow:0 0 4px rgba(0,0,0,.8);pointer-events:none}
+.vs{font-size:1.8em;font-weight:900;color:#ffd200}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7em;font-weight:bold;margin-top:4px}
+.br{background:#ffd200;color:#222}.bu{background:#333;color:#666}
+.tm{color:#ffd200;font-weight:bold;margin-top:6px;display:none;animation:bn .7s infinite}
+@keyframes bn{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.card-show{display:none;background:linear-gradient(135deg,rgba(102,126,234,.12),rgba(118,75,162,.12));border:2px solid #667eea;border-radius:14px;padding:16px;margin:10px 0;text-align:center;animation:ci .4s}
+@keyframes ci{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.cn{font-size:1.3em;font-weight:bold;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cp{font-size:2em;font-weight:900;color:#ffd200;margin:2px 0;text-shadow:0 0 12px rgba(255,210,0,.4)}
+.pa{display:none;margin-top:8px}
+#story-box{display:none;margin:10px auto;max-width:740px;padding:14px 18px;background:rgba(255,210,0,.06);border:1px solid rgba(255,210,0,.2);border-radius:12px;animation:si .5s}
+@keyframes si{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#story-text{font-size:1em;line-height:1.8;color:#ffd200;font-style:italic;white-space:pre-line}
+#lg{max-height:280px;overflow-y:auto;padding:8px;background:rgba(0,0,0,.3);border-radius:10px}
+.en{padding:10px 12px;margin:5px 0;border-radius:8px;background:rgba(255,255,255,.05);border-left:4px solid #667eea;font-size:.82em;line-height:1.5;animation:sl .3s}
+.en.at{border-left-color:#ff1744;background:rgba(255,23,68,.05)}
+.en.he{border-left-color:#00c853;background:rgba(0,200,83,.05)}
+.en.de{border-left-color:#00bcd4;background:rgba(0,188,212,.05)}
+.en.cr{border-left-color:#ffd200;background:rgba(255,210,0,.08);font-weight:bold}
+.en.sy{border-left-color:#444;color:#777;font-size:.76em}
+@keyframes sl{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.th{display:none;text-align:center;padding:16px;font-size:1.15em;color:#ff6b6b}
+#ov{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.96);z-index:1000;flex-direction:column;justify-content:center;align-items:center}
+.wt{font-size:3.5em;font-weight:900;margin-bottom:12px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#cv{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
+.dmg{position:fixed;font-size:2.5em;font-weight:900;pointer-events:none;z-index:100;text-shadow:0 0 20px currentColor;animation:df 1.2s forwards}
+@keyframes df{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}40%{transform:translate(-50%,-70%) scale(1.4)}100%{opacity:0;transform:translate(-50%,-140%) scale(1)}}
+.flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;animation:fl .4s forwards}
+@keyframes fl{0%{opacity:.35}100%{opacity:0}}
 </style>
 </head>
 <body>
-
-<h1>🌌 Arcane Clash - Vision</h1>
-<p style="text-align:center;color:#666">카메라로 물체를 말하면 AI가 판단합니다</p>
+<canvas id="cv"></canvas>
+<h1>🌌 Arcane Clash</h1>
+<p class="sub">카드마다 랜덤 능력! AI가 만드는 전투 서사!</p>
 
 <div class="box" id="lobby">
-<input type="text" id="nm" placeholder="닉네임" maxlength="12">
-<button class="b2" onclick="startGame()">게임 시작</button>
+<input type="text" id="nm" placeholder="닉네임 입력" maxlength="12">
+<div style="display:flex;gap:8px;margin-top:4px">
+<button class="b1" onclick="connectUSB()" id="ub">🔌 USB 연결</button>
+<button class="b2" onclick="startGame()">⚔️ 게임 시작</button>
+</div>
+<div id="ms" style="margin-top:8px;color:#555"></div>
 </div>
 
-<div class="box" id="ar" style="display:none">
-<div style="display:grid;grid-template-columns:1fr 70px 1fr;gap:15px">
-<div>
-<h2 id="pn">Player</h2>
-<div style="height:26px;background:#222;border-radius:8px;overflow:hidden;margin:8px 0">
-<div id="ph" style="height:100%;width:100%;background:linear-gradient(90deg,#00c853,#69f0ae);display:flex;align-items:center;justify-content:center;font-weight:bold">100</div>
+<div class="box arena" id="ar">
+<div class="pc" id="pc">
+<h2 id="pn" style="font-size:1.05em">Player</h2>
+<div class="hpb"><div class="hp hp1" id="ph" style="width:100%"></div><span class="hp-label" id="phl">100</span></div>
+<div id="ps" class="badge br">⚡ READY</div>
+<div class="tm" id="pt">▶ YOUR TURN</div>
 </div>
-</div>
-<div style="text-align:center"><span style="font-size:2em">VS</span><br><span id="tc" style="color:#ffd200">턴 1</span></div>
-<div>
-<h2>🤖 Guardian</h2>
-<div style="height:26px;background:#222;border-radius:8px;overflow:hidden;margin:8px 0">
-<div id="ah" style="height:100%;width:100%;background:linear-gradient(90deg,#e53935,#ff1744);display:flex;align-items:center;justify-content:center;font-weight:bold">100</div>
-</div>
-</div>
-</div>
-
-<div id="vision-area" style="margin-top:15px">
-<h3>📷 카메라</h3>
-<div id="camera-container">
-<video id="camera-video" autoplay playsinline></video>
-<canvas id="camera-canvas"></canvas>
-<div id="timer">30s</div>
-</div>
-
-<div style="margin-top:15px">
-<textarea id="pi" rows="2" placeholder="예: 빨간 사과를 찾아라" onpaste="return false"></textarea>
-<div style="display:flex;gap:8px;margin-top:8px">
-<button class="ba" onclick="cast(false)">⚔️ 시전</button>
-<button class="bs" onclick="cast(true)">⚡ 스페셜</button>
-</div>
+<div style="text-align:center"><span class="vs">⚔️</span><br><span style="color:#ffd200;font-size:.85em;font-weight:bold" id="tc">턴 0</span></div>
+<div class="pc" id="ac">
+<h2 style="font-size:1.05em">🤖 Guardian</h2>
+<div class="hpb"><div class="hp hp2" id="ah" style="width:100%"></div><span class="hp-label" id="ahl">100</span></div>
 </div>
 </div>
 
-<div id="story-box" style="display:none;margin-top:15px;padding:16px;background:rgba(255,210,0,.06);border:1px solid rgba(255,210,0,.2);border-radius:12px">
-<div id="story-text"></div>
+<div class="th" id="th">🤖 AI가 마법을 준비 중...</div>
+
+<div class="box" id="da" style="display:none">
+<h2 style="margin-bottom:3px">🃏 카드를 리더기에 대주세요!</h2>
+<div class="card-show" id="dc">
+<div class="cn" id="cn"></div>
+<div class="cp" id="cpw"></div>
+<div id="ct" style="font-weight:bold;margin:3px 0"></div>
+</div>
+<div class="pa" id="pa">
+<textarea id="pi" rows="2" placeholder="시전할 주문을 입력하세요!" onpaste="return false"></textarea>
+<div style="display:flex;gap:6px;margin-top:6px">
+<button class="ba" onclick="cast(false)">⚔️ 시전!</button>
+<button class="bs" onclick="cast(true)" id="sb" style="display:none">⚡ 스페셜!</button>
+</div>
+</div>
 </div>
 
-<div id="lg" style="max-height:200px;overflow-y:auto;margin-top:15px;padding:10px;background:rgba(0,0,0,.3);border-radius:10px"></div>
+<div id="story-box"><div id="story-text"></div></div>
+
+<div class="box" id="lb" style="display:none">
+<h3 style="margin-bottom:6px;font-size:.9em">📜 로그</h3>
+<div id="lg"></div>
+</div>
+
+<div id="ov">
+<div class="wt" id="wt"></div>
+<p style="color:#888;margin-bottom:20px" id="ws"></p>
+<button onclick="location.reload()" style="padding:14px 40px;font-size:1.1em;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;cursor:pointer">🔄 다시 하기</button>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbzxvqywcYbB1hy2OpBo6cekMAZQpY9_U_t6mYzJZTmNRtdlYTZyRsMjePrzl987auXxEg/exec";
-let gid = null;
-let stream = null;
+const API = "https://script.google.com/macros/s/AKfycbz26i1Y7q0b_xyRRwmUzU1lz5WqkifWdCyZKne-eapctOphQj8uAkARYFtayC5pg5uKHQ/exec";
+let gid=null,port=null,wtr=null,busy=false,ls="",curUid=null,curCard=null;
 let timerInterval = null;
 let timeLeft = 30;
-let curCard = null;
 
-// ==================== 카메라 ====================
-async function startCamera() {
+// ===== 효과음 =====
+function playSound(type) {
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-    document.getElementById('camera-video').srcObject = stream;
-  } catch(e) {
-    alert("카메라 접근 실패: " + e.message);
-  }
+    const audio = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    if (type === 'attack') { osc.type = 'sawtooth'; osc.frequency.value = 180; gain.gain.value = 0.4; }
+    else if (type === 'heal') { osc.type = 'sine'; osc.frequency.value = 880; gain.gain.value = 0.3; }
+    else if (type === 'critical') { osc.type = 'square'; osc.frequency.value = 220; gain.gain.value = 0.5; }
+    else if (type === 'special') { osc.type = 'sawtooth'; osc.frequency.value = 120; gain.gain.value = 0.6; }
+    else if (type === 'victory') { osc.type = 'sine'; osc.frequency.value = 660; gain.gain.value = 0.4; }
+    const compressor = audio.createDynamicsCompressor();
+    osc.connect(gain); gain.connect(compressor); compressor.connect(audio.destination);
+    osc.start();
+    setTimeout(() => { gain.gain.linearRampToValueAtTime(0.001, audio.currentTime + 0.8); setTimeout(() => osc.stop(), 900); }, 300);
+  } catch(e) {}
 }
 
-// ==================== 타이머 ====================
+// ===== 타이머 (30초 고정) =====
 function startTimer() {
   clearInterval(timerInterval);
   timeLeft = 30;
-  document.getElementById('timer').innerText = timeLeft + 's';
-  
+  updateTurnText();
+
   timerInterval = setInterval(() => {
     timeLeft--;
-    document.getElementById('timer').innerText = timeLeft + 's';
+    updateTurnText();
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
-      autoTimeout();
+      autoEndTurn();
     }
   }, 1000);
 }
 
 function stopTimer() {
   clearInterval(timerInterval);
+  document.getElementById('pt').innerHTML = `▶ YOUR TURN`;
 }
 
-// ==================== 시간 초과 ====================
-async function autoTimeout() {
-  const playerName = document.getElementById('pn').innerText;
-  const story = `⏰ 시간이 초과되어 ${playerName}은(는) 공격을 하지 못했다.`;
-  showStory(story);
-  log(story, 'sy');
+function updateTurnText() {
+  document.getElementById('pt').innerHTML = `▶ YOUR TURN <span style="color:#ff6b6b;font-size:0.75em">(${timeLeft}s)</span>`;
+}
+
+async function autoEndTurn() {
+  if (!gid) return;
   
+  busy = false;
+  stopTimer();
   document.getElementById('pt').style.display = 'none';
   document.getElementById('pc').classList.remove('on');
+  document.getElementById('th').style.display = 'block';
+  document.getElementById('th').innerHTML = '⏰ 시간 초과!';
   document.getElementById('dc').style.display = 'none';
   document.getElementById('pa').style.display = 'none';
+
+  const playerName = document.getElementById('pn').innerText;
+  const timeoutStory = "⏰ 시간이 초과되어 " + playerName + "은(는) 공격을 하지 못했다.";
+  showStory(timeoutStory);
+  log(timeoutStory, 'sy');
 
   document.getElementById('ac').classList.add('on');
   await new Promise(r => setTimeout(r, 1500));
 
-  // AI 턴 (미리 준비된 프롬프트 사용)
-  const aiPrompts = [
-    "어둠의 손이 뻗어져 나온다",
-    "얼음 폭풍이 몰아친다",
-    "번개가 하늘을 가른다",
-    "용의 숨결이 뿜어져 나온다"
-  ];
-  const randomPrompt = aiPrompts[Math.floor(Math.random() * aiPrompts.length)];
-  
   try {
-    const aiResult = await api('aiTurn', {gameId: gid, prompt: randomPrompt});
-    if (aiResult.success) {
-      updateHP(aiResult.playerHP, aiResult.aiHP);
-      showStory('🤖 ' + aiResult.story);
-      log('🤖 ' + aiResult.story);
-    }
-  } catch(e) {}
+    await api('aiTurn', {gameId: gid});
+    await ref();
+  } catch(e) { console.error(e); }
   
+  document.getElementById('th').style.display = 'none';
   document.getElementById('ac').classList.remove('on');
 }
 
-// ==================== API ====================
-async function api(action, params) {
-  const qs = params ? '&' + Object.entries(params).map(([k,v]) => k + '=' + encodeURIComponent(String(v))).join('&') : '';
-  const res = await fetch(API + '?action=' + action + qs, {redirect:'follow'});
+// ===== 기존 함수 =====
+async function api(action,params){
+  const qs=params?'&'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(String(v))).join('&'):'';
+  const res=await fetch(API+'?action='+action+qs,{redirect:'follow'});
   return await res.json();
 }
 
-// ==================== 게임 시작 ====================
-async function startGame() {
-  const n = document.getElementById('nm').value.trim();
-  if (!n) return alert('닉네임을 입력하세요!');
-  
-  const d = await api('startGame', {player: n});
-  if (d.success) {
-    gid = d.gameId;
-    document.getElementById('lobby').style.display = 'none';
-    document.getElementById('ar').style.display = 'grid';
-    document.getElementById('pn').innerText = n;
-    document.getElementById('pt').style.display = 'block';
-    document.getElementById('pc').classList.add('on');
-    
-    await startCamera();
-    startTimer();
-  }
+async function connectUSB(){
+  if(!("serial"in navigator))return alert("Chrome 사용!");
+  try{
+    port=await navigator.serial.requestPort();await port.open({baudRate:115200});
+    const e=new TextEncoderStream();e.readable.pipeTo(port.writable);wtr=e.writable.getWriter();
+    const d=new TextDecoderStream();port.readable.pipeTo(d.writable);const r=d.readable.getReader();
+    document.getElementById('ub').innerText='✅ 연결됨';document.getElementById('ub').disabled=true;
+    log('🔌 RFID 연결됨','sy');
+    (async()=>{while(true){const{value:v,done}=await r.read();if(done)break;if(v&&v.includes('CARD:')&&!busy){const uid=v.split('CARD:')[1].trim();if(document.getElementById('pt').style.display==='block')drawCard(uid);}}})();
+  }catch(e){alert(e.message)}
 }
 
-// ==================== 시전 ====================
-async function cast(isSp) {
-  const prompt = document.getElementById('pi').value.trim();
-  if (!prompt) return alert('주문을 입력하세요!');
-  
+async function startGame(){
+  const n=document.getElementById('nm').value.trim();
+  if(!n)return alert('닉네임 입력!');
+  try{
+    const d=await api('startGame',{player:n});
+    if(d.success){
+      gid=d.gameId;
+      document.getElementById('lobby').style.display='none';
+      document.getElementById('ar').style.display='grid';
+      document.getElementById('da').style.display='block';
+      document.getElementById('lb').style.display='block';
+      document.getElementById('pn').innerText=n;
+      document.getElementById('pt').style.display='block';
+      document.getElementById('pc').classList.add('on');
+      log('🌌 Arcane Clash 시작!','sy');
+      showStory('🌌 운명의 대결이 펼쳐진다...');
+    }
+  }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
+}
+
+async function drawCard(uid){
+  if(busy||!gid)return;busy=true;
+  try{
+    const d=await api('drawCard',{gameId:gid,uid:uid});
+    if(d.success){
+      curUid=d.uid||uid;
+      curCard=d.card;
+      const tm={Attack:'⚔️ 공격',Heal:'💚 회복',Defense:'🛡️ 방어'};
+      const cc={Attack:'#ff1744',Heal:'#00c853',Defense:'#00bcd4'};
+      document.getElementById('cn').innerText='✨ '+d.card.name;
+      document.getElementById('cpw').innerText='⚡ '+d.card.power;
+      const ct=document.getElementById('ct');
+      ct.innerText=tm[d.card.type];ct.style.color=cc[d.card.type];
+      document.getElementById('dc').style.display='block';
+      document.getElementById('pa').style.display='block';
+      document.getElementById('pi').value='';document.getElementById('pi').focus();
+      const sp=document.getElementById('ps').innerText;
+      document.getElementById('sb').style.display=sp.includes('READY')?'inline-block':'none';
+      log('🃏 드로우: '+d.card.name+' ('+tm[d.card.type]+')','sy');
+      showStory(d.story);
+      if(wtr)wtr.write('RGB:PURPLE\n');
+      flash('rgba(102,126,234,.3)');
+      startTimer();
+    } else {
+      log('❌ '+(d.message||d.error||'오류'),'sy');
+    }
+  }catch(e){console.error(e)}
+  busy=false;
+}
+
+async function cast(isSp){
+  const p=document.getElementById('pi').value.trim();
+  if(!p)return alert('주문 입력!');
+  if(!curUid)return alert('카드를 먼저 뽑으세요!');
+
+  document.getElementById('dc').style.display='none';
+  document.getElementById('pa').style.display='none';
+  document.getElementById('pt').style.display='none';
+  document.getElementById('pc').classList.remove('on');
+  document.getElementById('th').style.display='block';
   stopTimer();
-  document.getElementById('th').style.display = 'block';
-  document.getElementById('th').innerHTML = '🔍 분석 중...';
+  busy=true;
 
-  let visionScore = 0.5;
-  
-  if (!isSp) {
-    // Vision 분석
-    visionScore = await analyzeVision(prompt);
-  } else {
-    visionScore = 1.0; // 스페셜은 무조건 최대
-  }
+  try{
+    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid});
+    if(d.success){
+      updateHP(d.playerHP, d.aiHP);
+      showStory(d.story);
+      log(d.story, d.rgb=='YELLOW'?'cr':d.action=='Attack'?'at':d.action=='Heal'?'he':'de');
+      
+      if(d.action=='Attack'){playSound('attack');if(wtr)wtr.write('RGB:RED\n');}
+      else if(d.action=='Heal'){playSound('heal');if(wtr)wtr.write('RGB:GREEN\n');}
+      else{if(wtr)wtr.write('RGB:CYAN\n');}
+      if(isSp){playSound('special');if(wtr)wtr.write('RGB:YELLOW\n');}
 
-  const result = await api('playerTurn', {
-    gameId: gid,
-    prompt: prompt,
-    isSpecial: isSp ? 'true' : 'false',
-    visionScore: visionScore
-  });
-
-  if (result.success) {
-    updateHP(result.playerHP, result.aiHP);
-    showStory(result.story);
-    log(result.story);
-    
-    if (result.status === 'FINISHED') {
-      endGame(result.playerHP > 0);
+      if(d.status=='FINISHED'){
+        playSound('victory');
+        endGame(d.playerHP>0);
+        return;
+      }
+    } else {
+      alert(d.message || d.error);
+      document.getElementById('th').style.display='none';
+      busy=false;
+      startTimer();
       return;
     }
+
+    document.getElementById('ac').classList.add('on');
+    document.getElementById('th').innerHTML='🤖 Guardian의 반격!';
+    await new Promise(r=>setTimeout(r,2000));
+
+    const ai=await api('aiTurn',{gameId:gid});
+    if(ai&&ai.success){
+      updateHP(ai.playerHP, ai.aiHP);
+      showStory('🤖 '+ai.story);
+      log('🤖 '+ai.story,'at');
+      if(wtr)wtr.write('RGB:'+ai.rgb+'\n');
+      if(ai.status=='FINISHED'){
+        endGame(ai.playerHP>0);
+        return;
+      }
+    }
+
+    document.getElementById('th').style.display='none';
+    document.getElementById('th').innerHTML='🤖 AI가 마법을 준비 중...';
+    document.getElementById('ac').classList.remove('on');
+    document.getElementById('pt').style.display='block';
+    document.getElementById('pc').classList.add('on');
+    document.getElementById('pi').value='';
+    curUid=null;curCard=null;
+    startTimer();
+
+  }catch(e){
+    console.error(e);
+    document.getElementById('th').style.display='none';
+    startTimer();
   }
-
-  // AI 턴
-  document.getElementById('ac').classList.add('on');
-  await new Promise(r => setTimeout(r, 1800));
-
-  const aiPrompts = [
-    "어둠의 손이 뻗어져 나온다",
-    "얼음 폭풍이 몰아친다",
-    "번개가 하늘을 가른다",
-    "용의 숨결이 뿜어져 나온다"
-  ];
-  const randomPrompt = aiPrompts[Math.floor(Math.random() * aiPrompts.length)];
-  
-  const aiResult = await api('aiTurn', {gameId: gid, prompt: randomPrompt});
-  if (aiResult.success) {
-    updateHP(aiResult.playerHP, aiResult.aiHP);
-    showStory('🤖 ' + aiResult.story);
-    log('🤖 ' + aiResult.story);
-  }
-
-  document.getElementById('th').style.display = 'none';
-  document.getElementById('ac').classList.remove('on');
-  document.getElementById('pi').value = '';
-  startTimer();
+  busy=false;
 }
 
-// ==================== Vision 분석 ====================
-async function analyzeVision(prompt) {
-  const video = document.getElementById('camera-video');
-  const canvas = document.createElement('canvas');
-  canvas.width = 640;
-  canvas.height = 480;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-  const base64 = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
-  
-  try {
-    const res = await api('visionAnalyze', {
-      prompt: prompt,
-      image: base64
-    });
-    return res.score || 0.4;
-  } catch(e) {
-    return 0.3;
-  }
+function updateHP(p,a){
+  document.getElementById('ph').style.width=Math.max(p,1)+'%';
+  document.getElementById('phl').innerText=p;
+  document.getElementById('ah').style.width=Math.max(a,1)+'%';
+  document.getElementById('ahl').innerText=a;
+  document.getElementById('ph').classList.toggle('hpl',p<=30);
+  document.getElementById('ah').classList.toggle('hpl',a<=30);
 }
 
-// ==================== 상태 갱신 ====================
-async function ref() {
-  if (!gid) return;
-  const d = await api('getState', {gameId: gid});
-  if (d.success && d.game) {
-    updateHP(d.game.playerHP, d.game.aiHP);
-    document.getElementById('tc').innerText = `턴 ${d.game.turnNum}`;
-  }
+function endGame(win){
+  document.getElementById('wt').innerText=win?'🏆 VICTORY!':'💀 DEFEAT...';
+  document.getElementById('ws').innerText=win?'AI를 물리쳤습니다!':'패배했습니다...';
+  if(wtr)wtr.write(win?'RGB:GOLD_PULSE\n':'RGB:BLINK_RED\n');
+  setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
 }
 
-function updateHP(p, a) {
-  document.getElementById('ph').style.width = Math.max(p, 3) + '%';
-  document.getElementById('phl').innerText = p;
-  document.getElementById('ah').style.width = Math.max(a, 3) + '%';
-  document.getElementById('ahl').innerText = a;
+function showStory(t){document.getElementById('story-text').innerText=t;document.getElementById('story-box').style.display='block'}
+function log(t,c=''){const l=document.getElementById('lg'),d=document.createElement('div');d.className='en '+(c||'');d.innerText=t;l.appendChild(d);l.scrollTop=l.scrollHeight}
+
+async function ref(){
+  if(!gid) return;
+  try{
+    const d=await api('getState',{gameId:gid});
+    if(!d.success||!d.game)return;
+    const g=d.game;
+    updateHP(g.playerHP, g.aiHP);
+    document.getElementById('tc').innerText=`턴 ${g.turnNum}`;
+    const sp=document.getElementById('ps');
+    if(g.playerSpecial==='READY'){sp.innerText='⚡ READY';sp.className='badge br'}
+    else{sp.innerText='⚡ USED';sp.className='badge bu'}
+    if(g.lastStory&&g.lastStory!==ls&&g.turnNum>0){
+      ls=g.lastStory;
+      let c='';
+      if(g.lastRGB==='RED'||g.lastRGB==='RAINBOW')c='at';
+      else if(g.lastRGB==='GREEN')c='he';
+      else if(g.lastRGB==='CYAN')c='de';
+      else if(g.lastRGB==='YELLOW'||g.lastRGB==='GOLD_PULSE')c='cr';
+      log(g.lastStory,c);
+    }
+    if(g.status==='FINISHED'){
+      const w=g.playerHP>0;
+      document.getElementById('wt').innerText=w?'🏆 VICTORY!':'💀 DEFEAT...';
+      document.getElementById('ws').innerText=w?'AI를 물리쳤습니다!':'패배했습니다...';
+      if(w){if(wtr)wtr.write('RGB:GOLD_PULSE\n');flash('rgba(255,210,0,.3)');}
+      else{if(wtr)wtr.write('RGB:BLINK_RED\n');}
+      setTimeout(()=>{document.getElementById('ov').style.display='flex'},700);
+    }
+  }catch(e){console.error(e)}
 }
 
-function showStory(t) {
-  document.getElementById('story-text').innerText = t;
-  document.getElementById('story-box').style.display = 'block';
-}
-
-function log(t, c = '') {
-  const l = document.getElementById('lg');
-  const d = document.createElement('div');
-  d.className = 'en ' + c;
-  d.innerText = t;
-  l.appendChild(d);
-  l.scrollTop = l.scrollHeight;
-}
-
-function endGame(win) {
-  document.getElementById('wt').innerText = win ? '🏆 VICTORY!' : '💀 DEFEAT...';
-  document.getElementById('ov').style.display = 'flex';
-}
-
-// ==================== 초기화 ====================
-document.getElementById('pi').addEventListener('keypress', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    cast(false);
-  }
-});
+setInterval(()=>{if(gid&&!busy)ref()},3000);
 </script>
 </body>
 </html>
