@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>🌌 Arcane Clash</title>
 <style>
+/* 기존 스타일 + HP 라벨 + timer */
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
+body{font-family:'Noto Sans KR',sans-serif;background:#0a0a1a;color:#fff;min-height:100vh}
 h1{text-align:center;font-size:2.5em;padding:20px 0 5px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sub{text-align:center;color:#555;margin-bottom:12px;font-size:.85em}
 .box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;margin:10px auto;max-width:740px}
 input,textarea{width:100%;padding:11px;font-size:14px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;margin:5px 0;resize:none;outline:none}
 input:focus,textarea:focus{border-color:#667eea}
@@ -121,7 +121,7 @@ button:hover{transform:translateY(-2px)}button:disabled{opacity:.3;cursor:not-al
 const API = "https://script.google.com/macros/s/AKfycbz26i1Y7q0b_xyRRwmUzU1lz5WqkifWdCyZKne-eapctOphQj8uAkARYFtayC5pg5uKHQ/exec";
 let gid=null,port=null,wtr=null,busy=false,ls="",curUid=null,curCard=null;
 let timerInterval = null;
-let timeLeft = 30;
+let timeLeft = 60;
 
 // ===== 효과음 =====
 function playSound(type) {
@@ -141,10 +141,10 @@ function playSound(type) {
   } catch(e) {}
 }
 
-// ===== 타이머 (30초 고정) =====
+// ===== 타이머 (60초) =====
 function startTimer() {
   clearInterval(timerInterval);
-  timeLeft = 30;
+  timeLeft = 60;
   updateTurnText();
 
   timerInterval = setInterval(() => {
@@ -186,9 +186,22 @@ async function autoEndTurn() {
   document.getElementById('ac').classList.add('on');
   await new Promise(r => setTimeout(r, 1500));
 
+  // AI 턴 (미리 준비된 프롬프트)
+  const aiPrompts = [
+    "어둠의 손이 뻗어져 나온다",
+    "얼음 폭풍이 몰아친다",
+    "번개가 하늘을 가른다",
+    "용의 숨결이 뿜어져 나온다"
+  ];
+  const randomPrompt = aiPrompts[Math.floor(Math.random() * aiPrompts.length)];
+  
   try {
-    await api('aiTurn', {gameId: gid});
-    await ref();
+    const aiResult = await api('aiTurn', {gameId: gid, prompt: randomPrompt});
+    if (aiResult.success) {
+      updateHP(aiResult.playerHP, aiResult.aiHP);
+      showStory('🤖 ' + aiResult.story);
+      log('🤖 ' + aiResult.story);
+    }
   } catch(e) { console.error(e); }
   
   document.getElementById('th').style.display = 'none';
@@ -230,6 +243,7 @@ async function startGame(){
       document.getElementById('pc').classList.add('on');
       log('🌌 Arcane Clash 시작!','sy');
       showStory('🌌 운명의 대결이 펼쳐진다...');
+      startTimer(); // ★ 게임 시작과 동시에 타이머 작동
     }
   }catch(e){document.getElementById('ms').innerHTML='❌ '+e.message}
 }
@@ -278,7 +292,16 @@ async function cast(isSp){
   busy=true;
 
   try{
-    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid});
+    let visionScore = 0.5;
+    
+    if (!isSp) {
+      // Vision 분석 (간단한 키워드 매칭)
+      visionScore = analyzeVisionScore(p, curCard);
+    } else {
+      visionScore = 1.0; // 스페셜은 무조건 최대
+    }
+
+    const d=await api('playerTurn',{gameId:gid,prompt:p,isSpecial:String(isSp),uid:curUid,visionScore:visionScore});
     if(d.success){
       updateHP(d.playerHP, d.aiHP);
       showStory(d.story);
@@ -333,6 +356,18 @@ async function cast(isSp){
     startTimer();
   }
   busy=false;
+}
+
+// 간단한 Vision 점수 계산 (키워드 매칭)
+function analyzeVisionScore(prompt, card) {
+  const keywords = prompt.toLowerCase().split(' ');
+  let score = 0.3;
+  
+  // 카드 이름과 관련된 키워드가 있으면 점수 증가
+  if (keywords.some(k => card.name.toLowerCase().includes(k))) score += 0.4;
+  if (keywords.some(k => card.type.toLowerCase().includes(k))) score += 0.3;
+  
+  return Math.min(score, 1.0);
 }
 
 function updateHP(p,a){
